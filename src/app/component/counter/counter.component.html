@@ -1,4 +1,6 @@
 <div>
-  <h1>{{ cmpt }}</h1>
-  <h3>1</h3>
+  <h1>Compteur</h1>
+  <h3>{{ cmpt }}</h3>
+  <app-button @click="increment()">+1</app-button>
+  <app-button @click="decrement()">-1</app-button>
 </div>
