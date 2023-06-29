@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {EntitiesService} from "@core/services/entities.service";
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'pokemon-guesser';
+  constructor(private service: EntitiesService) {
+    this.service.getEntities();
+  }
 }
