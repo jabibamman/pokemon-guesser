@@ -8,8 +8,9 @@ import { DeleteComponent } from './modules/admin/delete/delete.component';
 import { CreateComponent } from './modules/admin/create/create.component';
 import { UpdateComponent } from './modules/admin/update/update.component';
 import { DuplicateComponent } from './modules/admin/duplicate/duplicate.component';
-import { EntitiesComponent } from './modules/entities/entities.component';
 import { DetailsComponent } from './modules/details/details.component';
+import { EntitiesModule } from './modules/entities/entities.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   exports: [],
@@ -19,13 +20,14 @@ import { DetailsComponent } from './modules/details/details.component';
     CreateComponent,
     UpdateComponent,
     DuplicateComponent,
-    EntitiesComponent,
     DetailsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    EntitiesModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

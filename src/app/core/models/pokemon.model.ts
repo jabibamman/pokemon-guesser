@@ -1,7 +1,7 @@
 import { EntitiesTypes } from "@shared/enums/entities-types.enum";
 import { ExpSpeedTypes } from "@shared/enums/expspeed-types.enum";
 
-export class EntitiesModel {
+export class Pokemon {
     number!: number;
     name!: string;
     types!: EntitiesTypes[];
@@ -24,7 +24,7 @@ export class EntitiesModel {
     electricDmg!: number;
     grassDmg!: number;
     iceDmg!: number;
-    fightDmg!: number;
+    fightDmg!: number; 
     poisonDmg!: number;
     groundDmg!: number;
     flyingDmg!: number;
@@ -35,4 +35,5 @@ export class EntitiesModel {
     dragonDmg!: number;
     evolutions!: number;
     legendary!: number;
+    image!: string;
 }
