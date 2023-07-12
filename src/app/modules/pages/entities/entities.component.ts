@@ -5,34 +5,28 @@ import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-entities',
-  templateUrl: './entities.component.html',
-  styleUrls: ['./entities.component.css']
+  templateUrl: './entities.component.html'
 })
 export class EntitiesComponent implements OnInit {
   pokemons: Pokemon[];
   selectedPokemon?: Pokemon;
   filteredPokemons: Pokemon[] = [];
-  searchTerm: string = '';
 
   constructor(private entitiesService: EntitiesService,
     private viewportScroller: ViewportScroller, private elementRef: ElementRef) {
       this.pokemons = [];
    }
 
-  ngOnInit(): void {
-      this.entitiesService.getPokemons().subscribe(pokemons => {
-          this.pokemons = pokemons;
-          this.filteredPokemons = this.pokemons;
-      });
-      this.search();
+   ngOnInit(): void {
+    this.entitiesService.getPokemons().subscribe(pokemons => {
+      this.pokemons = pokemons;
+      this.filteredPokemons = this.pokemons;
+    });
+    this.search('');
   }
 
-  search() {
-    if (this.searchTerm === '') {
-      this.filteredPokemons = this.pokemons;
-    } else {
-      this.filteredPokemons = this.pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
-    }
+  search(term: string) {
+    this.filteredPokemons = this.pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(term.toLowerCase()));
   }
 
   selectPokemon(pokemon: Pokemon): void {
@@ -42,5 +36,5 @@ export class EntitiesComponent implements OnInit {
     this.viewportScroller.scrollToPosition([element.scrollLeft, element.offsetTop]);
   }
 
-  
+   
 } 
