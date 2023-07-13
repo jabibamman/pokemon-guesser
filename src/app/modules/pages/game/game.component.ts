@@ -39,8 +39,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.dispatch(loadPokemons());
-    this.toastr.toastrConfig.positionClass = 'toast-center-right';
-    this.toastr.toastrConfig.timeOut = 15000;
+    this.toastr.toastrConfig.positionClass = 'toast-top-left';
+    this.toastr.toastrConfig.timeOut = 8000; 
 
     this.subscription.add(
       this.pokemons$.subscribe(pokemons => {
@@ -73,9 +73,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
   startNewGame(): void {
     if (!this.gameStarted) {
+      this.notificationService.sendMessage('game started');
       this.store.dispatch(setGameStarted({ gameStarted: true }));
       this.store.dispatch(startNewGame());
-      this.notificationService.sendMessage('game started');
       this.pokemonBattleSound.nativeElement.play();
     }
   }
@@ -105,6 +105,7 @@ export class GameComponent implements OnInit, OnDestroy {
         if (this.guessedPokemon) {
           if (this.guessedPokemon === this.targetPokemon) {
             this.notificationService.sendMessage('correct guess');
+            this.pokemonBattleSound.nativeElement.pause();
             this.levelUpSound.nativeElement.play();
             this.store.dispatch(setGameStarted({ gameStarted: false }));
             this.pokemons$
@@ -127,7 +128,7 @@ export class GameComponent implements OnInit, OnDestroy {
           }
           this.store.dispatch(decrementRemainingGuesses());
         } else {
-          this.toastr.error("This Pokémon is not in the list. Try again!", 'Error');
+          this.notificationService.sendMessage('incorrect guess', ['This Pokémon is not in the list. Try again!']);
         }
       });
   }
@@ -140,6 +141,12 @@ export class GameComponent implements OnInit, OnDestroy {
     } else {
       return `The target Pokémon has the same ${stat}!\n`;
     }
+  }
+
+  endGame(): void {
+    this.store.dispatch(setGameStarted({ gameStarted: false }));
+    this.notificationService.sendMessage('game over');
+    this.pokemonBattleSound.nativeElement.pause();
   }
 
   ngOnDestroy(): void {

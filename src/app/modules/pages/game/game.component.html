@@ -5,21 +5,18 @@
     <h1 class="text-xl text-center">Guess the Pokémon</h1>
     <div class="flex justify-center items-center mt-6">
         <button (click)="startNewGame()" class="bg-blue-500 text-white px-4 py-2 mt-2 text-center"  *ngIf="!gameStarted">Start Game</button>
-        <button (click)="startNewGame()" class="bg-red-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">End Game</button>
+        <button (click)="endGame()" class="bg-red-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">End Game</button>
       </div>
     <div class="flex justify-center items-center mt-6" *ngIf="!gameStarted && targetPokemon">
         <img [src]="guessedPokemon.image" alt="{{guessedPokemon.name}}" class="w-64 h-64 object-contain" *ngIf="gameStarted && guessedPokemon">
     </div>
-
     <div class="mt-6">
-        
       <label for="guess" class="block mb-2 text-center" *ngIf="gameStarted">Your Guess:</label>
       <div class="flex justify-center items-center mt-6" *ngIf="gameStarted">
         <img [src]="guessedPokemon.image" alt="{{guessedPokemon.name}}" class="w-64 h-64 object-contain" *ngIf="gameStarted && guessedPokemon">
       </div>
       <input type="text" id="guess" [(ngModel)]="userGuess" class="border px-4 py-2 rounded-lg w-full" *ngIf="gameStarted">
       <button (click)="handleGuess()" class="bg-blue-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">Guess</button>
-
       <p class="mt-6 text-center">Remaining Guesses: {{ remainingGuesses }}</p>
     </div>
   </div>
