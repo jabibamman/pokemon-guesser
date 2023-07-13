@@ -11,6 +11,8 @@ import { DuplicateComponent } from './modules/pages/admin/duplicate/duplicate.co
 import { DetailsComponent } from './modules/pages/details/details.component';
 import { EntitiesModule } from './modules/pages/entities/entities.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { effects, reducers } from '@core/store';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   exports: [],
@@ -25,6 +27,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    StoreModule.forRoot(reducers),
+    effects,
     HttpClientModule,
     EntitiesModule,
     BrowserAnimationsModule
