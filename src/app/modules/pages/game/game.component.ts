@@ -27,7 +27,8 @@ export class GameComponent implements OnInit, OnDestroy {
   remainingGuesses$: Observable<number>;
   private subscription: Subscription = new Subscription();
   @ViewChild('levelUpSound') levelUpSound!: ElementRef<HTMLAudioElement>;
-
+  @ViewChild('pokemonBattleSound') pokemonBattleSound!: ElementRef<HTMLAudioElement>;
+  @ViewChild('youWereClose') youWereClose!: ElementRef<HTMLAudioElement>;
 
   constructor(private store: Store<AppState>, private toastr: ToastrService, protected notificationService: NotificationService) {
     this.targetPokemon = new Pokemon();
@@ -75,6 +76,7 @@ export class GameComponent implements OnInit, OnDestroy {
       this.store.dispatch(setGameStarted({ gameStarted: true }));
       this.store.dispatch(startNewGame());
       this.notificationService.sendMessage('game started');
+      this.pokemonBattleSound.nativeElement.play();
     }
   }
   
@@ -87,6 +89,7 @@ export class GameComponent implements OnInit, OnDestroy {
   
     if (this.remainingGuesses <= 0) {
       this.notificationService.sendMessage('game over');
+      this.youWereClose.nativeElement.play();
       return;
     }
   
