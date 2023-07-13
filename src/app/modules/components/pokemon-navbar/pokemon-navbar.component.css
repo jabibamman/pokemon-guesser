@@ -11,3 +11,11 @@
 .nav-link:hover {
     opacity: 0.8;
 }
+
+.active-link {
+  text-decoration: underline;
+  text-decoration-color: #fff;
+  text-decoration-thickness: 0.2rem;
+  text-underline-offset: 0.2rem;
+  cursor: default;
+}

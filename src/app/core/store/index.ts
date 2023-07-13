@@ -4,9 +4,11 @@ import { AppState } from './app.state';
 import { EffectsModule } from '@ngrx/effects';
 import { PokemonEffects } from './pokemon.effect';
 import { Pokemon } from '@core/models/pokemon.model';
+import { gameReducer } from './game.reducer';
 
 export const reducers: ActionReducerMap<AppState> = {
-  pokemons: pokemonReducer
+  pokemons: pokemonReducer,
+  game: gameReducer
 };
 
 export const effects = [

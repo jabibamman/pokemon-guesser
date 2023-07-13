@@ -13,6 +13,8 @@ import { EntitiesModule } from './modules/pages/entities/entities.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { effects, reducers } from '@core/store';
 import { StoreModule } from '@ngrx/store';
+import { GameModule } from './modules/pages/game/game.module';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   exports: [],
@@ -31,7 +33,9 @@ import { StoreModule } from '@ngrx/store';
     effects,
     HttpClientModule,
     EntitiesModule,
-    BrowserAnimationsModule
+    GameModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
