@@ -39,7 +39,7 @@
               <td class="border px-4 py-2">{{pokemon.name}}</td>
               <td class="border px-4 py-2">
                 <ul>
-                  <li *ngFor="let hint of getHint(i) | async">{{ hint }}</li>
+                  <li *ngFor="let hint of (guessedPokemonsHints$ | async)?.[i]">{{ hint }}</li>
                 </ul>
               </td>
             </tr>

@@ -7,9 +7,10 @@ import { Pokemon } from '@core/models/pokemon.model';
 import { Observable, Subscription, map, take } from 'rxjs';
 import { AppState } from '@core/store/app.state';
 import { ToastrService } from 'ngx-toastr';
-import { addGuessedPokemon, addHintMessage, decrementRemainingGuesses, makeGuess, startNewGame } from '@core/store/game.action';
+import { addGuessedPokemon, decrementRemainingGuesses, makeGuess, resetGuessedPokemons, resetHints, startNewGame } from '@core/store/game.action';
 import { GameState, setGameStarted, setTargetPokemon } from '@core/store/game.state';
 import { selectGuessedPokemonsHints } from '@core/store/game.selector';
+import { addHint } from '@core/store/game.action';
 
 @Component({
   selector: 'app-game',
@@ -21,14 +22,14 @@ export class GameComponent implements OnInit, OnDestroy {
   targetPokemon: Pokemon;
   remainingGuesses: number = 5;
   userGuess: string = '';
-  hintMessage: string[] = [];
+  hintMessage: string[][] = [];
   gameStarted: boolean = false;
   guessedPokemon: Pokemon | null = null;
   gameState$: Observable<GameState>;
   remainingGuesses$: Observable<number>;
-  hintMessage$: Observable<string[]>;
+  hintMessage$: Observable<string[][]>;
   guessedPokemons$: Observable<Pokemon[]>;
-  guessedPokemonsHints$: Observable<string[]>;
+  guessedPokemonsHints$: Observable<string[][]>;
 
   private subscription: Subscription = new Subscription();
   @ViewChild('levelUpSound') levelUpSound!: ElementRef<HTMLAudioElement>;
@@ -59,7 +60,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.gameState$.subscribe(gameState => {
-        this.gameStarted = gameState.gameStarted;
+        this.gameStarted = gameState.gameStarted; 
       })
     );
     
@@ -84,6 +85,12 @@ export class GameComponent implements OnInit, OnDestroy {
     ));
 
     this.subscription.add(
+      this.guessedPokemonsHints$.subscribe(hintMessages => {
+        this.hintMessage.push(hintMessages[hintMessages.length - 1]);
+      }
+    ));
+    
+    this.subscription.add(
       this.guessedPokemons$.subscribe(guessedPokemons => {
         if (guessedPokemons.length > 0) {
           this.guessedPokemon = guessedPokemons[guessedPokemons.length - 1];
@@ -98,7 +105,17 @@ export class GameComponent implements OnInit, OnDestroy {
       this.notificationService.sendMessage('game started');
       this.store.dispatch(setGameStarted({ gameStarted: true }));
       this.store.dispatch(startNewGame());
-      this.pokemonBattleSound.nativeElement.play();
+      this.store.dispatch(resetHints());
+      this.store.dispatch(resetGuessedPokemons());
+
+      this.pokemons$
+      .pipe(take(1))
+      .subscribe(pokemons => {
+        this.targetPokemon = pokemons[Math.floor(Math.random() * pokemons.length)];
+        this.store.dispatch(setTargetPokemon({ pokemon: this.targetPokemon }));
+      });
+
+      this.pokemonBattleSound.nativeElement.play();    
     }
   }
   
@@ -117,57 +134,47 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   
     this.store.dispatch(makeGuess({ guess: this.userGuess }));
-  
+
     this.pokemons$
-      .pipe(
-        take(1), 
-        map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === this.userGuess.toLowerCase()))
-      )
-      .subscribe(tempPokemon => {
-        this.guessedPokemon = tempPokemon ? tempPokemon : null;
-        if (this.guessedPokemon) {
-          this.store.dispatch(addGuessedPokemon({ pokemon: this.guessedPokemon }));
+    .pipe(
+      take(1), 
+      map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === this.userGuess.toLowerCase()))
+    )
+    .subscribe(tempPokemon => {
+      this.guessedPokemon = tempPokemon ? tempPokemon : null;
+      if (this.guessedPokemon) {
+        let hint = this.getHint(this.userGuess, this.targetPokemon);
+        let formattedHint = hint.join('\n'); 
+        this.store.dispatch(addHint({ hint: formattedHint }));
+        this.store.dispatch(addGuessedPokemon({ pokemon: this.guessedPokemon, hint: formattedHint }));
 
-          if (this.guessedPokemon === this.targetPokemon) {
-            this.notificationService.sendMessage('correct guess');
-            this.pokemonBattleSound.nativeElement.pause();
-            this.levelUpSound.nativeElement.play();
-            this.store.dispatch(setGameStarted({ gameStarted: false }));
-            this.pokemons$
-            .pipe(
-              take(1),
-              map(pokemons => pokemons[Math.floor(Math.random() * pokemons.length)])
-            )
-            .subscribe(newTargetPokemon => {
-              this.targetPokemon = newTargetPokemon;
-              this.store.dispatch(setTargetPokemon({ pokemon: newTargetPokemon }));
-            });
-          } else {
-            this.hintMessage = [];
-            const stats: (keyof Pokemon)[] = ["hp", "attack", "defense", "speed"];
-            for (let stat of stats) {
-              this.compareStats(this.guessedPokemon, this.targetPokemon, stat);
-            }
-  
-            this.notificationService.sendMessage('incorrect guess', this.hintMessage);
-          }
-          this.store.dispatch(decrementRemainingGuesses());
-        } else {
-          this.notificationService.sendMessage('incorrect guess', ['This Pokémon is not in the list. Try again!']);
+        if (this.guessedPokemon === this.targetPokemon) {
+          this.notificationService.sendMessage('correct guess');
+          this.pokemonBattleSound.nativeElement.pause();
+          this.levelUpSound.nativeElement.play();
+          this.store.dispatch(setGameStarted({ gameStarted: false }));
         }
-      }); 
+      } else {
+        this.toastr.info('Please enter a valid Pokémon name.', 'Invalid Pokémon');
+      }
+
+      this.store.dispatch(decrementRemainingGuesses());
+
+    });
+}
+  compareStats(guessedPokemon: Pokemon, targetPokemon: Pokemon, stat: keyof Pokemon): void {
+    const comparison =
+      guessedPokemon[stat] > targetPokemon[stat]
+        ? "higher"
+        : guessedPokemon[stat] < targetPokemon[stat]
+        ? "lower"
+        : "equal";
+  
+    this.addHintMessage([`The ${stat} of your guess is ${comparison} than the target Pokémon.`]);
   }
   
-  compareStats(guessedPokemon: Pokemon, targetPokemon: Pokemon, stat: keyof Pokemon): void {
-    if (guessedPokemon[stat] > targetPokemon[stat]) {
-      this.addHintMessage([`The ${stat} of your guess is higher than the target Pokémon.`]);
-    } else if (guessedPokemon[stat] < targetPokemon[stat]) {
-      this.addHintMessage([`The ${stat} of your guess is lower than the target Pokémon.`]);
-    } else {
-      this.addHintMessage([`The ${stat} of your guess is equal to the target Pokémon.`]);
-    }
-  }
 
+  
   endGame(): void {
     this.store.dispatch(setGameStarted({ gameStarted: false }));
     this.notificationService.sendMessage('game over');
@@ -178,14 +185,50 @@ export class GameComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  addHintMessage(messages: string[]): void {
-    this.store.dispatch(addHintMessage({ messages }));
+  getHint(userGuess: string, targetPokemon: Pokemon): string[] {
+    let hint: string[] = [];
+    const stats: (keyof Pokemon)[] = ["hp", "attack", "defense", "speed"];
+    
+    this.pokemons$
+      .pipe(
+        take(1),
+        map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === userGuess.toLowerCase()))
+      )
+      .subscribe(guessedPokemon => {
+        if (guessedPokemon) {
+          for (let stat of stats) {
+            if (stat !== 'types') {
+              if (guessedPokemon[stat] > targetPokemon[stat]) {
+                hint.push(`The target Pokemon has less ${stat} than your guessed Pokemon.`);
+              } else if (guessedPokemon[stat] < targetPokemon[stat]) {
+                hint.push(`The target Pokemon has more ${stat} than your guessed Pokemon.`);
+              } else {
+                hint.push(`Your guessed Pokemon and the target Pokemon have the same ${stat}.`);
+              }
+            }
+          }
+    
+          const commonTypes = guessedPokemon.types.filter(type => type !== 'none' && targetPokemon.types.includes(type));
+          if (commonTypes.length > 0) {
+            hint.push(`Your guessed Pokemon shares these type(s) with the target Pokemon: ${commonTypes.join(', ')}`);
+          } else {
+            hint.push(`Your guessed Pokemon doesn't share any type with the target Pokemon.`);
+          }
+        } else {
+          hint.push('The guessed Pokemon was not found.');
+        }
+      });
+    
+  
+    return hint;
   }
+  
+   
+  
 
-  getHint(i: number): Observable<string[]> {
-    return this.guessedPokemonsHints$.pipe(
-      map(hints => hints.slice(i + 1))
-    );
-  } 
+  addHintMessage(message: string[]): void {
+    this.hintMessage.push(message);
+
+  }
   
 }
