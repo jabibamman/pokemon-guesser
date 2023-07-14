@@ -5,7 +5,7 @@ import { ViewportScroller } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { loadPokemons } from '@core/store/pokemon.action';
-import { selectPokemons } from '@core/store/index';
+import { selectPokemons } from '@core/store';
 import { AppState } from '@core/store/app.state';
 
 @Component({
@@ -26,8 +26,8 @@ export class EntitiesComponent implements OnInit {
    }
 
    ngOnInit(): void {
-    this.store.dispatch(loadPokemons()); 
-    this.pokemons$ = this.store.select(selectPokemons); 
+    this.store.dispatch(loadPokemons());
+    this.pokemons$ = this.store.select(selectPokemons);
     this.pokemons$.subscribe(pokemons => {
       this.allPokemons = pokemons; // Stocker tous les pokémons
       this.filteredPokemons = pokemons; // Initialiser les pokémons filtrés avec la liste complète
@@ -40,11 +40,9 @@ export class EntitiesComponent implements OnInit {
     this.filteredPokemons = this.allPokemons.filter(pokemon => pokemon.name.toLowerCase().includes(term.toLowerCase()));
   }
 
-
   selectPokemon(pokemon: Pokemon): void {
     this.selectedPokemon = pokemon;
     const element = this.elementRef.nativeElement;
     this.viewportScroller.scrollToPosition([element.scrollLeft, element.offsetTop]);
   }
-   
-} 
+}

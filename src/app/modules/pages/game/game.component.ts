@@ -35,7 +35,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.pokemons$ = this.store.select(selectPokemons);
     this.gameState$ = this.store.select('game');
     this.remainingGuesses$ = this.store.select(state => state.game.remainingGuesses);
-}
+  }
 
   ngOnInit(): void {
     this.store.dispatch(loadPokemons());
@@ -54,7 +54,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.gameStarted = gameState.gameStarted;
       })
     );
-    
+
     this.subscription.add(
       this.notificationService.message$.subscribe(message => {
         if (message === 'game over') {
@@ -79,25 +79,25 @@ export class GameComponent implements OnInit, OnDestroy {
       this.pokemonBattleSound.nativeElement.play();
     }
   }
-  
+
 
   handleGuess(): void {
     if (!this.gameStarted) {
       this.toastr.error("The game hasn't started yet. Press 'Start Game' to start.", 'Error');
       return;
     }
-  
+
     if (this.remainingGuesses <= 0) {
       this.notificationService.sendMessage('game over');
       this.youWereClose.nativeElement.play();
       return;
     }
-  
+
     this.store.dispatch(makeGuess({ guess: this.userGuess }));
-  
+
     this.pokemons$
       .pipe(
-        take(1), 
+        take(1),
         map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === this.userGuess.toLowerCase()))
       )
       .subscribe(tempPokemon => {
@@ -122,7 +122,7 @@ export class GameComponent implements OnInit, OnDestroy {
             for (let stat of stats) {
               this.hintMessage.push(this.compareStats(this.guessedPokemon, stat));
             }
-  
+
             this.notificationService.sendMessage('incorrect guess', this.hintMessage);
           }
           this.store.dispatch(decrementRemainingGuesses());
@@ -131,7 +131,7 @@ export class GameComponent implements OnInit, OnDestroy {
         }
       });
   }
-  
+
   compareStats(guessedPokemon: Pokemon, stat: keyof Pokemon): string {
     if (guessedPokemon[stat] > this.targetPokemon[stat]) {
       return `The target Pokémon has lower ${stat}!\n`;
@@ -144,6 +144,5 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-
   }
 }
