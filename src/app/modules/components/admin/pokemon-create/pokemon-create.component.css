@@ -18,7 +18,6 @@
   background: lightgray;
   cursor: pointer;
   border-radius: 50%;
-  /* Ajoutez cette ligne pour mettre à jour la couleur du curseur */
   background-color: lightgray;
 }
 
