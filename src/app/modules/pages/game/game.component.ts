@@ -44,12 +44,12 @@ export class GameComponent implements OnInit, OnDestroy {
     this.hintMessage$ = this.store.select(state => state.game.hintMessage);
     this.guessedPokemons$ = this.store.select(state => state.game.guessedPokemons);
     this.guessedPokemonsHints$ = this.store.pipe(select(selectGuessedPokemonsHints));
-}
+  }
 
   ngOnInit(): void {
     this.store.dispatch(loadPokemons());
     this.toastr.toastrConfig.positionClass = 'toast-top-left';
-    this.toastr.toastrConfig.timeOut = 8000; 
+    this.toastr.toastrConfig.timeOut = 8000;
 
     this.subscription.add(
       this.pokemons$.subscribe(pokemons => {
@@ -60,10 +60,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.gameState$.subscribe(gameState => {
-        this.gameStarted = gameState.gameStarted; 
+        this.gameStarted = gameState.gameStarted;
       })
     );
-    
+
     this.subscription.add(
       this.notificationService.message$.subscribe(message => {
         if (message === 'game over') {
@@ -82,21 +82,21 @@ export class GameComponent implements OnInit, OnDestroy {
       this.hintMessage$.subscribe(hintMessage => {
         this.hintMessage = hintMessage;
       }
-    ));
+      ));
 
     this.subscription.add(
       this.guessedPokemonsHints$.subscribe(hintMessages => {
         this.hintMessage.push(hintMessages[hintMessages.length - 1]);
       }
-    ));
-    
+      ));
+
     this.subscription.add(
       this.guessedPokemons$.subscribe(guessedPokemons => {
         if (guessedPokemons.length > 0) {
           this.guessedPokemon = guessedPokemons[guessedPokemons.length - 1];
         }
       }
-    ));
+      ));
 
   }
 
@@ -109,72 +109,70 @@ export class GameComponent implements OnInit, OnDestroy {
       this.store.dispatch(resetGuessedPokemons());
 
       this.pokemons$
-      .pipe(take(1))
-      .subscribe(pokemons => {
-        this.targetPokemon = pokemons[Math.floor(Math.random() * pokemons.length)];
-        this.store.dispatch(setTargetPokemon({ pokemon: this.targetPokemon }));
-      });
+        .pipe(take(1))
+        .subscribe(pokemons => {
+          this.targetPokemon = pokemons[Math.floor(Math.random() * pokemons.length)];
+          this.store.dispatch(setTargetPokemon({ pokemon: this.targetPokemon }));
+        });
 
-      this.pokemonBattleSound.nativeElement.play();    
+      this.pokemonBattleSound.nativeElement.play();
     }
   }
-  
+
 
   handleGuess(event: any): void {
-    event.preventDefault(); 
+    event.preventDefault();
     if (!this.gameStarted) {
       this.toastr.error("The game hasn't started yet. Press 'Start Game' to start.", 'Error');
       return;
     }
-  
+
     if (this.remainingGuesses <= 0) {
       this.notificationService.sendMessage('game over');
       this.youWereClose.nativeElement.play();
       return;
     }
-  
+
     this.store.dispatch(makeGuess({ guess: this.userGuess }));
 
     this.pokemons$
-    .pipe(
-      take(1), 
-      map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === this.userGuess.toLowerCase()))
-    )
-    .subscribe(tempPokemon => {
-      this.guessedPokemon = tempPokemon ? tempPokemon : null;
-      if (this.guessedPokemon) {
-        let hint = this.getHint(this.userGuess, this.targetPokemon);
-        let formattedHint = hint.join('\n'); 
-        this.store.dispatch(addHint({ hint: formattedHint }));
-        this.store.dispatch(addGuessedPokemon({ pokemon: this.guessedPokemon, hint: formattedHint }));
+      .pipe(
+        take(1),
+        map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === this.userGuess.toLowerCase()))
+      )
+      .subscribe(tempPokemon => {
+        this.guessedPokemon = tempPokemon ? tempPokemon : null;
+        if (this.guessedPokemon) {
+          let hint = this.getHint(this.userGuess, this.targetPokemon);
+          let formattedHint = hint.join('\n');
+          this.store.dispatch(addHint({ hint: formattedHint }));
+          this.store.dispatch(addGuessedPokemon({ pokemon: this.guessedPokemon, hint: formattedHint }));
 
-        if (this.guessedPokemon === this.targetPokemon) {
-          this.notificationService.sendMessage('correct guess');
-          this.pokemonBattleSound.nativeElement.pause();
-          this.levelUpSound.nativeElement.play();
-          this.store.dispatch(setGameStarted({ gameStarted: false }));
+          if (this.guessedPokemon === this.targetPokemon) {
+            this.notificationService.sendMessage('correct guess');
+            this.pokemonBattleSound.nativeElement.pause();
+            this.levelUpSound.nativeElement.play();
+            this.store.dispatch(setGameStarted({ gameStarted: false }));
+          }
+        } else {
+          this.toastr.info('Please enter a valid Pokémon name.', 'Invalid Pokémon');
         }
-      } else {
-        this.toastr.info('Please enter a valid Pokémon name.', 'Invalid Pokémon');
-      }
 
-      this.store.dispatch(decrementRemainingGuesses());
+        this.store.dispatch(decrementRemainingGuesses());
 
-    });
-}
+      });
+  }
   compareStats(guessedPokemon: Pokemon, targetPokemon: Pokemon, stat: keyof Pokemon): void {
     const comparison =
       guessedPokemon[stat] > targetPokemon[stat]
         ? "higher"
         : guessedPokemon[stat] < targetPokemon[stat]
-        ? "lower"
-        : "equal";
-  
+          ? "lower"
+          : "equal";
+
     this.addHintMessage([`The ${stat} of your guess is ${comparison} than the target Pokémon.`]);
   }
-  
 
-  
   endGame(): void {
     this.store.dispatch(setGameStarted({ gameStarted: false }));
     this.notificationService.sendMessage('game over');
@@ -188,7 +186,7 @@ export class GameComponent implements OnInit, OnDestroy {
   getHint(userGuess: string, targetPokemon: Pokemon): string[] {
     let hint: string[] = [];
     const stats: (keyof Pokemon)[] = ["hp", "attack", "defense", "speed"];
-    
+
     this.pokemons$
       .pipe(
         take(1),
@@ -207,7 +205,7 @@ export class GameComponent implements OnInit, OnDestroy {
               }
             }
           }
-    
+
           const commonTypes = guessedPokemon.types.filter(type => type !== 'none' && targetPokemon.types.includes(type));
           if (commonTypes.length > 0) {
             hint.push(`Your guessed Pokemon shares these type(s) with the target Pokemon: ${commonTypes.join(', ')}`);
@@ -217,18 +215,15 @@ export class GameComponent implements OnInit, OnDestroy {
         } else {
           hint.push('The guessed Pokemon was not found.');
         }
+
       });
-    
-  
+
     return hint;
   }
-  
-   
-  
 
   addHintMessage(message: string[]): void {
     this.hintMessage.push(message);
 
   }
-  
+
 }
