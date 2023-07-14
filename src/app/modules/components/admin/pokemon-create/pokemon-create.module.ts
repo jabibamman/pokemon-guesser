@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {PokemonCreateComponent} from "@modules/components/pokemon-create/pokemon-create.component";
+import {PokemonCreateComponent} from "@modules/components/admin/pokemon-create/pokemon-create.component";
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
