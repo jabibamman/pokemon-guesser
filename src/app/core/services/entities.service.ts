@@ -33,15 +33,10 @@ export class EntitiesService {
   }
   
   
-  private getImageUrl(id: number, name: string ): string {
-    let idString = id.toString();
-    if (idString.length === 1) {
-      idString = "00" + idString;
-    } else if (idString.length === 2) {
-      idString = "0" + idString;
-    }
-
-    const formattedName = idString+name;
+  private getImageUrl(id: number, name: string): string {
+    const idString = id.toString().padStart(3, '0');
+    const formattedName = idString + name;
+  
     return `assets/pokemons/images/${formattedName}.webp`;
   }
 }
