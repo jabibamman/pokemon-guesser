@@ -1,14 +1,15 @@
 import { NotificationService } from './../../../core/services/notification.service';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { loadPokemons } from '@core/store/pokemon.action';
 import { selectPokemons } from '@core/store/index';
 import { Pokemon } from '@core/models/pokemon.model';
 import { Observable, Subscription, map, take } from 'rxjs';
 import { AppState } from '@core/store/app.state';
 import { ToastrService } from 'ngx-toastr';
-import { decrementRemainingGuesses, makeGuess, startNewGame } from '@core/store/game.action';
+import { addGuessedPokemon, addHintMessage, decrementRemainingGuesses, makeGuess, startNewGame } from '@core/store/game.action';
 import { GameState, setGameStarted, setTargetPokemon } from '@core/store/game.state';
+import { selectGuessedPokemonsHints } from '@core/store/game.selector';
 
 @Component({
   selector: 'app-game',
@@ -25,6 +26,10 @@ export class GameComponent implements OnInit, OnDestroy {
   guessedPokemon: Pokemon | null = null;
   gameState$: Observable<GameState>;
   remainingGuesses$: Observable<number>;
+  hintMessage$: Observable<string[]>;
+  guessedPokemons$: Observable<Pokemon[]>;
+  guessedPokemonsHints$: Observable<string[]>;
+
   private subscription: Subscription = new Subscription();
   @ViewChild('levelUpSound') levelUpSound!: ElementRef<HTMLAudioElement>;
   @ViewChild('pokemonBattleSound') pokemonBattleSound!: ElementRef<HTMLAudioElement>;
@@ -35,6 +40,9 @@ export class GameComponent implements OnInit, OnDestroy {
     this.pokemons$ = this.store.select(selectPokemons);
     this.gameState$ = this.store.select('game');
     this.remainingGuesses$ = this.store.select(state => state.game.remainingGuesses);
+    this.hintMessage$ = this.store.select(state => state.game.hintMessage);
+    this.guessedPokemons$ = this.store.select(state => state.game.guessedPokemons);
+    this.guessedPokemonsHints$ = this.store.pipe(select(selectGuessedPokemonsHints));
 }
 
   ngOnInit(): void {
@@ -103,6 +111,8 @@ export class GameComponent implements OnInit, OnDestroy {
       .subscribe(tempPokemon => {
         this.guessedPokemon = tempPokemon ? tempPokemon : null;
         if (this.guessedPokemon) {
+          this.store.dispatch(addGuessedPokemon({ pokemon: this.guessedPokemon }));
+
           if (this.guessedPokemon === this.targetPokemon) {
             this.notificationService.sendMessage('correct guess');
             this.pokemonBattleSound.nativeElement.pause();
@@ -121,7 +131,7 @@ export class GameComponent implements OnInit, OnDestroy {
             this.hintMessage = [];
             const stats: (keyof Pokemon)[] = ["hp", "attack", "defense", "speed"];
             for (let stat of stats) {
-              this.hintMessage.push(this.compareStats(this.guessedPokemon, stat));
+              this.compareStats(this.guessedPokemon, stat);
             }
   
             this.notificationService.sendMessage('incorrect guess', this.hintMessage);
@@ -130,17 +140,11 @@ export class GameComponent implements OnInit, OnDestroy {
         } else {
           this.notificationService.sendMessage('incorrect guess', ['This Pokémon is not in the list. Try again!']);
         }
-      });
+      }); 
   }
   
-  compareStats(guessedPokemon: Pokemon, stat: keyof Pokemon): string {
-    if (guessedPokemon[stat] > this.targetPokemon[stat]) {
-      return `The target Pokémon has lower ${stat}!\n`;
-    } else if (guessedPokemon[stat] < this.targetPokemon[stat]) {
-      return `The target Pokémon has higher ${stat}!\n`;
-    } else {
-      return `The target Pokémon has the same ${stat}!\n`;
-    }
+  compareStats(guessedPokemon: Pokemon, stat: keyof Pokemon): void {
+    this.addHintMessage(`The target Pokémon has lower ${stat}!`);
   }
 
   endGame(): void {
@@ -151,6 +155,15 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-
   }
+
+  addHintMessage(message: string): void {
+    this.store.dispatch(addHintMessage({ message }));
+  }
+
+  getHint(i: number): Observable<string> {
+  return this.guessedPokemonsHints$.pipe(
+    map(hints => hints[i])
+  );
+}
 }

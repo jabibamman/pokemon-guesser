@@ -8,6 +8,9 @@ export interface GameState {
   hintMessage: string[];
   guessedPokemon: Pokemon | null;
   targetPokemon: Pokemon | null;
+  guessedPokemons: Pokemon[];
+  guessedPokemonsHints: string[];
+
 }
   
 export const setTargetPokemon = createAction(

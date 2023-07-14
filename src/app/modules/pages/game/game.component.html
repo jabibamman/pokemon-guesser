@@ -19,6 +19,29 @@
       <button (click)="handleGuess()" class="bg-blue-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">Guess</button>
       <p class="mt-6 text-center">Remaining Guesses: {{ remainingGuesses }}</p>
     </div>
+
+    <div *ngIf="gameStarted">
+      <div class="flex justify-center items-center mt-6">
+        <table class="table-auto">
+          <thead>
+            <tr>
+              <th class="px-4 py-2">Image</th>
+              <th class="px-4 py-2">Name</th>
+              <th class="px-4 py-2">Hint</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pokemon of guessedPokemons$ | async; let i = index">
+              <td class="border px-4 py-2">
+                <img [src]="pokemon.image" alt="{{pokemon.name}}">
+              </td>
+              <td class="border px-4 py-2">{{pokemon.name}}</td>
+              <td class="border px-4 py-2">{{ getHint(i) | async }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 <audio id="levelUpSound" #levelUpSound>
