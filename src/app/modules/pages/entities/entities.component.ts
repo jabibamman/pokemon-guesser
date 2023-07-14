@@ -15,7 +15,7 @@ import { AppState } from '@core/store/app.state';
 export class EntitiesComponent implements OnInit {
   pokemons$: Observable<Pokemon[]>;
   selectedPokemon?: Pokemon;
-  allPokemons: Pokemon[] = []; // Variable pour stocker tous les pokémons
+  allPokemons: Pokemon[] = []; 
   filteredPokemons: Pokemon[];
 
   constructor(private entitiesService: EntitiesService,
@@ -29,8 +29,8 @@ export class EntitiesComponent implements OnInit {
     this.store.dispatch(loadPokemons());
     this.pokemons$ = this.store.select(selectPokemons);
     this.pokemons$.subscribe(pokemons => {
-      this.allPokemons = pokemons; // Stocker tous les pokémons
-      this.filteredPokemons = pokemons; // Initialiser les pokémons filtrés avec la liste complète
+      this.allPokemons = pokemons;
+      this.filteredPokemons = pokemons;
     });
 
     this.search('');

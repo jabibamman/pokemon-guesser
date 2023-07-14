@@ -18,7 +18,7 @@ export class NotificationService {
         this.showError('Game over, you have no more guesses left.', 'Game Over');
         break;
       case 'game started':
-        this.showSuccess('The game has started. Make your guess!', 'Game Started');
+        this.showSuccess('Game started! Guess the Pokemon!', 'Game Started');
         break;
       case 'correct guess':
         this.showSuccess('You guessed correctly! You win!', 'Correct Guess');
@@ -52,7 +52,7 @@ export class NotificationService {
   showInfo(message: string, title: string, timeOut: number) {
     if (timeOut) {
       this.toastr.info(message, title, {
-        positionClass: 'toast-bottom-right',
+        positionClass: 'toast-top-right',
         timeOut: timeOut,
         progressBar: true,
         progressAnimation: 'increasing',

@@ -5,9 +5,12 @@ export interface GameState {
   gameStarted: boolean;
   remainingGuesses: number;
   userGuess: string;
-  hintMessage: string[];
+  hintMessage: string[][];
   guessedPokemon: Pokemon | null;
   targetPokemon: Pokemon | null;
+  guessedPokemons: Pokemon[];
+  guessedPokemonsHints: string[];
+
 }
   
 export const setTargetPokemon = createAction(
