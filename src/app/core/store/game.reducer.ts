@@ -11,8 +11,8 @@ export const initialState: GameState = {
     targetPokemon: null,
     guessedPokemons: [],
     guessedPokemonsHints: []
-
 };
+
 
 export const gameReducer = createReducer(
     initialState,
@@ -21,8 +21,8 @@ export const gameReducer = createReducer(
     on(startNewGame, state => ({ ...state, gameStarted: true, remainingGuesses: 5, userGuess: '', hintMessage: [], guessedPokemon: null })),
     on(makeGuess, (state, { guess }) => ({ ...state, userGuess: guess })),
     on(decrementRemainingGuesses, state => ({ ...state, remainingGuesses: state.remainingGuesses - 1 })),
-    on(addHintMessage, (state, { message }) => {
-        return { ...state, hintMessage: [...state.hintMessage, message] };
+    on(addHintMessage, (state, { messages }) => {
+        return { ...state, hintMessage: [...state.hintMessage, ...messages] };
       }),
     on(addGuessedPokemon, (state, { pokemon }) => {
     return {

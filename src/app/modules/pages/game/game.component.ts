@@ -77,6 +77,20 @@ export class GameComponent implements OnInit, OnDestroy {
       })
     );
 
+    this.subscription.add(
+      this.hintMessage$.subscribe(hintMessage => {
+        this.hintMessage = hintMessage;
+      }
+    ));
+
+    this.subscription.add(
+      this.guessedPokemons$.subscribe(guessedPokemons => {
+        if (guessedPokemons.length > 0) {
+          this.guessedPokemon = guessedPokemons[guessedPokemons.length - 1];
+        }
+      }
+    ));
+
   }
 
   startNewGame(): void {
@@ -89,7 +103,8 @@ export class GameComponent implements OnInit, OnDestroy {
   }
   
 
-  handleGuess(): void {
+  handleGuess(event: any): void {
+    event.preventDefault(); 
     if (!this.gameStarted) {
       this.toastr.error("The game hasn't started yet. Press 'Start Game' to start.", 'Error');
       return;
@@ -131,7 +146,7 @@ export class GameComponent implements OnInit, OnDestroy {
             this.hintMessage = [];
             const stats: (keyof Pokemon)[] = ["hp", "attack", "defense", "speed"];
             for (let stat of stats) {
-              this.compareStats(this.guessedPokemon, stat);
+              this.compareStats(this.guessedPokemon, this.targetPokemon, stat);
             }
   
             this.notificationService.sendMessage('incorrect guess', this.hintMessage);
@@ -143,8 +158,14 @@ export class GameComponent implements OnInit, OnDestroy {
       }); 
   }
   
-  compareStats(guessedPokemon: Pokemon, stat: keyof Pokemon): void {
-    this.addHintMessage(`The target Pokémon has lower ${stat}!`);
+  compareStats(guessedPokemon: Pokemon, targetPokemon: Pokemon, stat: keyof Pokemon): void {
+    if (guessedPokemon[stat] > targetPokemon[stat]) {
+      this.addHintMessage([`The ${stat} of your guess is higher than the target Pokémon.`]);
+    } else if (guessedPokemon[stat] < targetPokemon[stat]) {
+      this.addHintMessage([`The ${stat} of your guess is lower than the target Pokémon.`]);
+    } else {
+      this.addHintMessage([`The ${stat} of your guess is equal to the target Pokémon.`]);
+    }
   }
 
   endGame(): void {
@@ -157,13 +178,14 @@ export class GameComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  addHintMessage(message: string): void {
-    this.store.dispatch(addHintMessage({ message }));
+  addHintMessage(messages: string[]): void {
+    this.store.dispatch(addHintMessage({ messages }));
   }
 
-  getHint(i: number): Observable<string> {
-  return this.guessedPokemonsHints$.pipe(
-    map(hints => hints[i])
-  );
-}
+  getHint(i: number): Observable<string[]> {
+    return this.guessedPokemonsHints$.pipe(
+      map(hints => hints.slice(i + 1))
+    );
+  } 
+  
 }

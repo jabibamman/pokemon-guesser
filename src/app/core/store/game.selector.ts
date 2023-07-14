@@ -6,5 +6,4 @@ export const selectGameState = createFeatureSelector<GameState>('game');
 export const selectGuessedPokemonsHints = createSelector(
     selectGameState,
     (state: GameState) => state.hintMessage
-  );
-  
+);

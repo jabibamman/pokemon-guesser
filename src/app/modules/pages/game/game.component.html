@@ -16,18 +16,19 @@
         <img [src]="guessedPokemon.image" alt="{{guessedPokemon.name}}" class="w-64 h-64 object-contain" *ngIf="gameStarted && guessedPokemon">
       </div>
       <input type="text" id="guess" [(ngModel)]="userGuess" class="border px-4 py-2 rounded-lg w-full" *ngIf="gameStarted">
-      <button (click)="handleGuess()" class="bg-blue-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">Guess</button>
+      <button (click)="handleGuess($event)" class="bg-blue-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">Guess</button>
       <p class="mt-6 text-center">Remaining Guesses: {{ remainingGuesses }}</p>
     </div>
 
     <div *ngIf="gameStarted">
       <div class="flex justify-center items-center mt-6">
-        <table class="table-auto">
+        <div style="height: 400px; overflow-y: auto;">
+          <table class="table-auto">
           <thead>
             <tr>
               <th class="px-4 py-2">Image</th>
               <th class="px-4 py-2">Name</th>
-              <th class="px-4 py-2">Hint</th>
+              <th class="px-4 py-2">Hints</th>
             </tr>
           </thead>
           <tbody>
@@ -36,12 +37,17 @@
                 <img [src]="pokemon.image" alt="{{pokemon.name}}">
               </td>
               <td class="border px-4 py-2">{{pokemon.name}}</td>
-              <td class="border px-4 py-2">{{ getHint(i) | async }}</td>
+              <td class="border px-4 py-2">
+                <ul>
+                  <li *ngFor="let hint of getHint(i) | async">{{ hint }}</li>
+                </ul>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+    
   </div>
 </div>
 <audio id="levelUpSound" #levelUpSound>
