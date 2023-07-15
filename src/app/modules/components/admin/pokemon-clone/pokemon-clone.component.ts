@@ -6,7 +6,7 @@ import { clonePokemon } from '@core/store/pokemon.action';
 
 @Component({
   selector: 'app-pokemon-clone',
-  template: `<button (click)="clonePokemon()">Clone</button>`
+  template: `<button (click)="clonePokemon()" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Clone</button>`,
 })
 export class PokemonCloneComponent {
   @Input() pokemon!: Pokemon;
