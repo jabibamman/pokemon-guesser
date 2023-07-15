@@ -15,8 +15,8 @@
       <tr>
         <td class="px-4 py-2">
           <span class="mr-2">Male</span>
-          <input type="range" [(ngModel)]="pokemon.malePct" (input)="updateFemalePercentage(); updateSliderColor($event)"
-                 min="0" max="100" class="w-64 h-4 rounded-full range-slider" [style.background-color]="sliderColor">
+          <input type="range" [(ngModel)]="pokemon.malePct" (input)="updateSliderColor($event); updateFemalePercentage()"
+                 min="0" max="100" class="w-64 h-4 rounded-full range-slider" [style.background-color]="sliderColor" formControlName="genderRatio">
           <span class="ml-2">Female</span>
         </td>
       </tr>
@@ -29,15 +29,15 @@
           <select class="border border-gray-300 rounded px-4 py-2" [(ngModel)]="pokemon.types[1]" formControlName="types">
             <option *ngFor="let option of typesOptions" [value]="option">{{ option }}</option>
           </select>
-        </td>        
+        </td>
         <td class="px-4 py-2 font-bold">Height:</td>
         <td class="px-4 py-2">
           <input type="text" [(ngModel)]="pokemon.height" class="border border-gray-300 rounded px-4 py-2" formControlName="height">
         </td>
         <td class="px-4 py-2 font-bold">Weight:</td>
         <td class="px-4 py-2">
-          <input type="text" [(ngModel)]="pokemon.weight">
-        </td> 
+          <input type="text" [(ngModel)]="pokemon.weight" class="border border-gray-300 rounded px-4 py-2" formControlName="height">
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-2 font-bold">Capt Rate:</td>
@@ -87,9 +87,9 @@
           <input type="number" [(ngModel)]="pokemon.evolutions" class="border border-gray-300 rounded px-4 py-2" formControlName="evolutions">
         </td>
         <td class="px-4 py-2">
-          <mat-checkbox class="ml-4" 
-                [(ngModel)]="pokemon.legendary" 
-                (change)="pokemon.legendary = ((pokemon.legendary === 1 ? 0 : 1))">
+          <mat-checkbox class="ml-4"
+                [(ngModel)]="pokemon.legendary"
+                (change)="pokemon.legendary = ((pokemon.legendary === 1 ? 0 : 1))" formControlName="legendary">
             Legendary
         </mat-checkbox>
         </td>
