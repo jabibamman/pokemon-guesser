@@ -158,11 +158,11 @@ export class GameComponent implements OnInit, OnDestroy {
             this.levelUpSound.nativeElement.play();
             this.store.dispatch(setGameStarted({ gameStarted: false }));
           }
+
+          this.store.dispatch(decrementRemainingGuesses());
         } else {
           this.toastr.info('Please enter a valid Pokémon name.', 'Invalid Pokémon');
         }
-
-        this.store.dispatch(decrementRemainingGuesses());
 
       });
   }
