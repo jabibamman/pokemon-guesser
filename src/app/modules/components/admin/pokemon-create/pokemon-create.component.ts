@@ -11,13 +11,14 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 })
 export class PokemonCreateComponent implements OnInit {
   pokemon: Pokemon;
-  expSpeedOptions = Object.values(ExpSpeedTypes);
-  typesOptions: EntitiesTypes[] = Object.values(EntitiesTypes);
-  sliderColor: string;
+  expSpeedOptions: ExpSpeedTypes[];
+  typesOptions: EntitiesTypes[];
   form: FormGroup;
 
 
   constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder) {
+    this.expSpeedOptions = Object.values(ExpSpeedTypes);
+    this.typesOptions = Object.values(EntitiesTypes);
     this.form = this.fb.group({
       name: ['', Validators.required],
       malePct: [50, [Validators.min(0), Validators.max(100)]],
@@ -40,7 +41,7 @@ export class PokemonCreateComponent implements OnInit {
     })
     this.pokemon = new Pokemon();
     this.pokemon.malePct = 50;
-    this.sliderColor = 'primary';
+    this.updateFemalePercentage()
     this.pokemon.types[0] = EntitiesTypes.Bug;
     this.pokemon.types[1] = EntitiesTypes.none;
   }
@@ -72,7 +73,6 @@ export class PokemonCreateComponent implements OnInit {
     //TODO: ajouter le pokemon au json
   }
 
-  
-  
+
+
 }
- 
