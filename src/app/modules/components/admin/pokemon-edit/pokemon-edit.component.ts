@@ -4,6 +4,7 @@ import { Pokemon } from '@core/models/pokemon.model';
 import { AppState } from '@core/store/app.state';
 import { updatePokemon } from '@core/store/pokemon.action';
 import { Store } from '@ngrx/store';
+import { EntitiesTypes } from '@shared/enums/entities-types.enum';
 import { ExpSpeedTypes } from '@shared/enums/expspeed-types.enum';
 @Component({
   selector: 'app-pokemon-edit',
@@ -15,15 +16,20 @@ export class PokemonEditComponent implements OnChanges {
   @Output() pokemonUpdated: EventEmitter<Pokemon> = new EventEmitter<Pokemon>();
   form: FormGroup;
   expSpeedTypes: string[];
+  typesOptions: EntitiesTypes[];
+  typesOptionsNotNone: EntitiesTypes[];
 
   constructor(private store: Store<AppState>, private fb: FormBuilder) {
     this.expSpeedTypes = Object.values(ExpSpeedTypes);
+    this.typesOptions = Object.values(EntitiesTypes);
+    this.typesOptionsNotNone = this.typesOptions.filter(type => type !== EntitiesTypes.none);
 
     this.form = this.fb.group({
       name: ['', Validators.required],
       malePct: ['', [Validators.min(0), Validators.max(100)]],
       femalePct: ['', [Validators.min(0), Validators.max(100)]],
-      types : ['', Validators.required],
+      type1: ['', Validators.required],
+      type2: ['', Validators.required],
       height: ['', Validators.required],
       weight: ['', Validators.required],
       captRate: ['', Validators.required],
@@ -42,12 +48,15 @@ export class PokemonEditComponent implements OnChanges {
 
   updatePokemon(updatedPokemon: Pokemon): void {
     console.log('Voici le pokemon mis à jour :', updatedPokemon);
-
+  
     updatedPokemon.number = this.pokemon.number;
     updatedPokemon.image = this.pokemon.image;
+  
+    updatedPokemon.types = [this.form.value.type1, this.form.value.type2];
+    
     this.store.dispatch(updatePokemon({ pokemon: updatedPokemon }));
     this.pokemonUpdated.emit(updatedPokemon);
-
+  
     this.pokemon = updatedPokemon;
   }
 
@@ -58,7 +67,8 @@ export class PokemonEditComponent implements OnChanges {
 
       this.form.patchValue({
         name: this.pokemon.name,
-        types: this.pokemon.types,
+        type1: this.pokemon.types[0],  // Assurez-vous que les types ont toujours au moins 1 élément
+        type2: this.pokemon.types[1] || '', 
         height: this.pokemon.height,
         weight: this.pokemon.weight,
         malePct: this.pokemon.malePct,
