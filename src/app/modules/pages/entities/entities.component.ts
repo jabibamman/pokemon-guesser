@@ -39,8 +39,6 @@ export class EntitiesComponent implements OnInit, OnChanges {
       this.selectedPokemon = JSON.parse(storedSelectedPokemon);
     }
 
-
-
     this.search('');
   }
 
@@ -58,17 +56,15 @@ export class EntitiesComponent implements OnInit, OnChanges {
     this.viewportScroller.scrollToPosition([element.scrollLeft, element.offsetTop]);
   }
 
-
   onDeletePokemon(id: number): void {
-      this.store.dispatch(deletePokemon({ id }));
-      this.allPokemons = this.allPokemons.filter(pokemon => pokemon.number !== id);
-      this.filteredPokemons = this.filteredPokemons.filter(pokemon => pokemon.number !== id);
-      if (this.selectedPokemon?.number === id) {
-        this.selectedPokemon = undefined;
-        localStorage.removeItem('selectedPokemon');
-      }
+    this.store.dispatch(deletePokemon({ id }));
+    this.allPokemons = this.allPokemons.filter(pokemon => pokemon.number !== id);
+    this.filteredPokemons = this.filteredPokemons.filter(pokemon => pokemon.number !== id);
+    if (this.selectedPokemon?.number === id) {
+      this.selectedPokemon = undefined;
+      localStorage.removeItem('selectedPokemon');
     }
-  
+  }
   
 
 }
