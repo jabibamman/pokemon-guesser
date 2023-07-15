@@ -102,11 +102,11 @@ export class PokemonCreateComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSubmit() {
-    if (this.form.valid && this.fileToUpload.name !== '') {
+    if (this.form.valid) {
       this.pokemon.types[0] = this.form.value.type1;
       this.pokemon.types[1] = this.form.value.type2;
       this.pokemon.baseTotal = this.pokemon.hp + this.pokemon.attack + this.pokemon.defense + this.pokemon.special + this.pokemon.speed;
-      this.pokemon.image = this.fileToUpload.name;
+      this.pokemon.image = this.form.value.image;
       this.pokemon.number = this.entitiesService.getLastPokemonNumber()+1;
 
       console.log(this.pokemon);
@@ -129,10 +129,10 @@ export class PokemonCreateComponent implements OnInit, OnDestroy, OnChanges {
 
       this.pokemonCreated.emit(this.pokemon);
 
-      this.notificationService.showSuccess(this.pokemon.name+' has been created!', 'Success');
+      this.notificationService.showSuccess(this.pokemon.name +' has been created!', 'Success');
       this.resetForm();
     } else {
-      console.log('invalid form');
+      this.notificationService.showError('Please fill all the required fields', 'Error');
     }
   }
 
