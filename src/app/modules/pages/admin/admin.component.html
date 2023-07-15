@@ -1,6 +1,2 @@
 <app-pokemon-navbar></app-pokemon-navbar>
-<app-pokemon-create></app-pokemon-create>
-
-<!--<app-search (search)="search($event)"></app-search>
-<app-pokemon-list [pokemons]="filteredPokemons" (select)="selectPokemon($event)"></app-pokemon-list>
--->
+<app-pokemon-create (pokemonCreated)="onCreatedPokemon($event)"></app-pokemon-create>

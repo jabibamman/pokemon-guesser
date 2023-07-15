@@ -37,7 +37,22 @@ export const updatePokemonSuccess = createAction(
 );
 
 export const updatePokemonFailed = createAction(
-  '[Pokemon] Update Pokemon Failed',
+  '[Pokemon] Create Pokemon Failed',
+  props<{ error: any }>()
+);
+
+export const createPokemon = createAction(
+  '[Pokemon] Create Pokemon',
+  props<{ pokemon: Pokemon }>()
+);
+
+export const createPokemonSuccess = createAction(
+  '[Pokemon] Create Pokemon Success',
+  props<{ pokemon: Pokemon }>()
+);
+
+export const createPokemonFailed = createAction(
+  '[Pokemon] Create Pokemon Failed',
   props<{ error: any }>()
 );
 

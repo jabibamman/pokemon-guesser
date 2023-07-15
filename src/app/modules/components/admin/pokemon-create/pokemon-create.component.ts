@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from "@angular/core";
+import {Component, ElementRef, EventEmitter, OnChanges, OnDestroy, OnInit, Output, Renderer2} from "@angular/core";
 import {Pokemon} from "@core/models/pokemon.model";
 import {ExpSpeedTypes} from "@shared/enums/expspeed-types.enum";
 import {EntitiesTypes} from "@shared/enums/entities-types.enum";
@@ -7,13 +7,16 @@ import {EntitiesService} from "@core/services/entities.service";
 import {Subscription} from "rxjs";
 import {NotificationService} from "@core/services/notification.service";
 import {HttpClient} from "@angular/common/http";
+import {Store} from "@ngrx/store";
+import {AppState} from "@core/store/app.state";
+import {createPokemon} from "@core/store/pokemon.action";
 
 @Component({
   selector: 'app-pokemon-create',
   templateUrl: './pokemon-create.component.html',
   styleUrls: ['./pokemon-create.component.css']
 })
-export class PokemonCreateComponent implements OnInit, OnDestroy {
+export class PokemonCreateComponent implements OnInit, OnDestroy, OnChanges {
   private subscription: Subscription = new Subscription();
   pokemon: Pokemon;
   expSpeedOptions: ExpSpeedTypes[];
@@ -22,9 +25,10 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
   form: FormGroup;
   hideRange: boolean = false;
   fileToUpload: File;
+  @Output() pokemonCreated: EventEmitter<Pokemon> = new EventEmitter<Pokemon>();
 
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder,
+  constructor(private store: Store<AppState>, private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder,
               private entitiesService: EntitiesService, private notificationService: NotificationService,
               private http: HttpClient) {
     this.expSpeedOptions = Object.values(ExpSpeedTypes);
@@ -103,6 +107,7 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
       this.pokemon.types[1] = this.form.value.type2;
       this.pokemon.baseTotal = this.pokemon.hp + this.pokemon.attack + this.pokemon.defense + this.pokemon.special + this.pokemon.speed;
       this.pokemon.image = this.fileToUpload.name;
+      this.pokemon.number = this.entitiesService.getLastPokemonNumber()+1;
 
       console.log(this.pokemon);
       this.subscription.add(
@@ -118,23 +123,11 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
         )
       );
 
-      const pokeNumber = this.entitiesService.getLastPokemonNumber()+1;
-      const fileReader = new FileReader();
+      this.entitiesService.saveImageToLocalStorage(this.form.value.image);
 
-      fileReader.onload = (event: any) => {
-        const base64Image = event.target.result;
-        this.pokemon.image = base64Image;
-        localStorage.setItem(pokeNumber+this.pokemon.name+'.webp', base64Image);
-        console.log('Image sauvegardée avec succès dans le localStorage!');
-      };
+      this.store.dispatch(createPokemon({ pokemon: this.pokemon }));
 
-      fileReader.onerror = (error) => {
-        console.error('Erreur lors de la lecture de l\'image :', error);
-        this.notificationService.showError('An error occured while uploading the file', 'Error');
-        return;
-      };
-
-      fileReader.readAsDataURL(this.fileToUpload);
+      this.pokemonCreated.emit(this.pokemon);
 
       this.notificationService.showSuccess(this.pokemon.name+' has been created!', 'Success');
       this.resetForm();
@@ -150,4 +143,35 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+  updateFormValues(): void {
+    if (this.pokemon) {
+      this.form.patchValue({
+        image: this.pokemon.image,
+        name: this.pokemon.name,
+        type1: this.pokemon.types[0],
+        type2: this.pokemon.types[1] || '',
+        height: this.pokemon.height,
+        weight: this.pokemon.weight,
+        malePct: this.pokemon.malePct,
+        femalePct: this.pokemon.femalePct,
+        captRate: this.pokemon.captRate,
+        expPoints: this.pokemon.expPoints,
+        expSpeed: this.pokemon.expSpeed,
+        hp: this.pokemon.hp,
+        attack: this.pokemon.attack,
+        defense: this.pokemon.defense,
+        special: this.pokemon.special,
+        speed: this.pokemon.speed,
+        evolutions: this.pokemon.evolutions,
+        legendary: this.pokemon.legendary,
+      });
+    }
+  }
+
+
+  ngOnChanges(): void {
+    this.updateFormValues();
+  }
+
 }

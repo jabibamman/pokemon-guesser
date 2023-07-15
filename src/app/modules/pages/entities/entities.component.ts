@@ -1,8 +1,8 @@
-import { Component, ElementRef, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {Component, ElementRef, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import { Pokemon } from '@core/models/pokemon.model';
 import { EntitiesService } from '@core/services/entities.service';
 import { ViewportScroller } from '@angular/common';
-import { Observable } from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import { Store } from '@ngrx/store';
 import { clonePokemon, deletePokemon, loadPokemons, updatePokemon } from '@core/store/pokemon.action';
 import { selectPokemons } from '@core/store';
@@ -13,11 +13,12 @@ import { getPokemonList } from '@core/store/pokemon.selector';
   selector: 'app-entities',
   templateUrl: './entities.component.html'
 })
-export class EntitiesComponent implements OnInit, OnChanges {
+export class EntitiesComponent implements OnInit, OnChanges, OnDestroy {
   pokemons$: Observable<Pokemon[]>;
   selectedPokemon?: Pokemon;
-  allPokemons: Pokemon[] = []; 
+  allPokemons: Pokemon[] = [];
   filteredPokemons: Pokemon[];
+  private subscription: Subscription = new Subscription();
 
   constructor(private entitiesService: EntitiesService,
     private viewportScroller: ViewportScroller, private elementRef: ElementRef,
@@ -29,10 +30,13 @@ export class EntitiesComponent implements OnInit, OnChanges {
    ngOnInit(): void {
     this.store.dispatch(loadPokemons());
     this.pokemons$ = this.store.select(getPokemonList);
-    this.pokemons$.subscribe(pokemons => {
-      this.allPokemons = pokemons;
-      this.filteredPokemons = pokemons;
-    });
+
+    this.subscription.add(
+      this.pokemons$.subscribe(pokemons => {
+        this.allPokemons = pokemons;
+        this.filteredPokemons = pokemons;
+      })
+    );
 
     const storedSelectedPokemon = localStorage.getItem('selectedPokemon');
     if (storedSelectedPokemon) {
@@ -42,8 +46,7 @@ export class EntitiesComponent implements OnInit, OnChanges {
     this.search('');
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-  }
+  ngOnChanges(changes: SimpleChanges): void { }
 
   search(term: string) {
     this.filteredPokemons = this.allPokemons.filter(pokemon => pokemon.name.toLowerCase().includes(term.toLowerCase()));
@@ -86,5 +89,7 @@ export class EntitiesComponent implements OnInit, OnChanges {
     this.store.dispatch(clonePokemon({ pokemon: clonedPokemon }));
   }
 
-
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 }
