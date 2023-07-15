@@ -15,6 +15,8 @@ export class PokemonCreateComponent implements OnInit {
   typesOptions: EntitiesTypes[];
   typesOptionsNotNone: EntitiesTypes[];
   form: FormGroup;
+  hideRange: boolean = false;
+  fileToUpload: File;
 
 
   constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder) {
@@ -24,10 +26,8 @@ export class PokemonCreateComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       malePct: [50, [Validators.min(0), Validators.max(100)]],
-      types: this.fb.array([
-        EntitiesTypes.none,
-        EntitiesTypes.none,
-      ]),
+      type1: ['', Validators.required],
+      type2: ['', Validators.required],
       height: ['', Validators.required],
       weight: ['', Validators.required],
       captRate: ['', Validators.required],
@@ -44,15 +44,14 @@ export class PokemonCreateComponent implements OnInit {
     this.pokemon = new Pokemon();
     this.pokemon.malePct = 50;
     this.updateFemalePercentage()
-    this.pokemon.types[0] = EntitiesTypes.Bug;
-    this.pokemon.types[1] = EntitiesTypes.none;
+    this.fileToUpload = new File([], '');
   }
 
   ngOnInit(): void {
   }
 
   onFileSelected(event: any) {
-    const file: File = event.target.files[0];
+    this.fileToUpload = event.target.files[0];
   }
 
   updateFemalePercentage() {
@@ -65,16 +64,28 @@ export class PokemonCreateComponent implements OnInit {
     this.renderer.setStyle(rangeInput, 'background', newColor);
   }
 
+  updateGender() {
+    if (this.hideRange) {
+      this.pokemon.malePct = 0;
+      this.pokemon.femalePct = 0;
+    } else {
+      this.pokemon.malePct = 50;
+      this.pokemon.femalePct = 50;
+    }
+  }
+
   get types(): FormArray {
     return this.form.get('types') as FormArray;
   }
 
   onSubmit() {
     console.log(this.form.value);
+    console.log(this.pokemon);
 
-    //TODO: ajouter le pokemon au json
+    if (this.form.valid && this.fileToUpload.name !== '') {
+      //TODO: ajouter le pokemon au json
+    } else {
+      console.log('invalid form');
+    }
   }
-
-
-
 }
