@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Pokemon } from '@core/models/pokemon.model';
+import { EntitiesService } from '@core/services/entities.service';
 import { AppState } from '@core/store/app.state';
 import { updatePokemon } from '@core/store/pokemon.action';
 import { Store } from '@ngrx/store';
@@ -19,12 +20,13 @@ export class PokemonEditComponent implements OnChanges {
   typesOptions: EntitiesTypes[];
   typesOptionsNotNone: EntitiesTypes[];
 
-  constructor(private store: Store<AppState>, private fb: FormBuilder) {
+  constructor(private store: Store<AppState>, private fb: FormBuilder, private entitiesService: EntitiesService) {
     this.expSpeedTypes = Object.values(ExpSpeedTypes);
     this.typesOptions = Object.values(EntitiesTypes);
     this.typesOptionsNotNone = this.typesOptions.filter(type => type !== EntitiesTypes.none);
 
     this.form = this.fb.group({
+      image: ['', Validators.required],
       name: ['', Validators.required],
       malePct: ['', [Validators.min(0), Validators.max(100)]],
       femalePct: ['', [Validators.min(0), Validators.max(100)]],
@@ -50,7 +52,6 @@ export class PokemonEditComponent implements OnChanges {
     console.log('Voici le pokemon mis à jour :', updatedPokemon);
   
     updatedPokemon.number = this.pokemon.number;
-    updatedPokemon.image = this.pokemon.image;
   
     updatedPokemon.types = [this.form.value.type1, this.form.value.type2];
     
@@ -58,6 +59,8 @@ export class PokemonEditComponent implements OnChanges {
     this.pokemonUpdated.emit(updatedPokemon);
   
     this.pokemon = updatedPokemon;
+    this.entitiesService.saveImageToLocalStorage(this.form.value.imageUrl);
+
   }
 
 
@@ -66,8 +69,9 @@ export class PokemonEditComponent implements OnChanges {
       console.log('PokemonEditComponent constructor()', this.pokemon);
 
       this.form.patchValue({
+        image: this.pokemon.image,
         name: this.pokemon.name,
-        type1: this.pokemon.types[0],  // Assurez-vous que les types ont toujours au moins 1 élément
+        type1: this.pokemon.types[0],
         type2: this.pokemon.types[1] || '', 
         height: this.pokemon.height,
         weight: this.pokemon.weight,

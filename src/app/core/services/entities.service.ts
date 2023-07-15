@@ -3,12 +3,14 @@ import { Pokemon } from "@core/models/pokemon.model";
 import {HttpClient} from "@angular/common/http";
 import { Observable, map, of, tap, } from 'rxjs';
 import { EntitiesTypes } from '@shared/enums/entities-types.enum';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntitiesService {
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+    private sanitizer: DomSanitizer) {
   }
 
   getPokemons(): Observable<Pokemon[]> {
@@ -84,6 +86,23 @@ export class EntitiesService {
     localStorage.setItem('pokemons', JSON.stringify(storedPokemons));
 
     return of(newPokemon);
+  }
+
+
+  saveImageToLocalStorage(imageUrl: string): void {
+    let image = new Image();
+    image.src = imageUrl;
+    image.onload = function () {
+      let canvas = document.createElement('canvas');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      let ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        let dataURL = canvas.toDataURL();
+        localStorage.setItem('pokemonImage', dataURL);
+      }
+    };
   }
 }
 
