@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AppState } from '@core/store/app.state';
 import { deletePokemon } from '@core/store/pokemon.action';
 import { Store } from '@ngrx/store';
@@ -10,18 +10,18 @@ import { Store } from '@ngrx/store';
 })
 export class PokemonDeleteComponent {
   @Output() pokemonDeleted: EventEmitter<number> = new EventEmitter<number>();
-  
+  @Input()
+  pokemonId!: number;
+
   pokemonToDelete: string = '';
 
   constructor(private store: Store<AppState>) { }
 
 
-  deletePokemon(id: number): void {
+  deletePokemon(): void {
     if (confirm('Are you sure you want to delete this Pokemon?')) {
-      console.log('Deleting Pokemon with id: ' + id);
-      this.store.dispatch(deletePokemon({ id }));
-      this.pokemonToDelete = ''; // Réinitialise la valeur de pokemonToDelete
-      this.pokemonDeleted.emit(id);
+      this.store.dispatch(deletePokemon({ id: this.pokemonId }));
+      this.pokemonDeleted.emit(this.pokemonId);
     }
   }
-}
+} 

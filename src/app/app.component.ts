@@ -12,7 +12,5 @@ export class AppComponent {
    // this.service.getPokemons();
   }
 
-  ngOnInit(): void {
-    console.log('AppComponent.ngOnInit()');
-  }
+  ngOnInit(): void { }
 }
