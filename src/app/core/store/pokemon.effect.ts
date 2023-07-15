@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY } from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import { EntitiesService } from '@core/services/entities.service';
-import { deletePokemon,deletePokemonFailed, deletePokemonSuccess, loadPokemons, loadPokemonsSuccess, updatePokemon, updatePokemonFailed, updatePokemonSuccess } from './pokemon.action';
+import { clonePokemon, clonePokemonSuccess, deletePokemon,deletePokemonFailed, deletePokemonSuccess, loadPokemons, loadPokemonsSuccess, updatePokemon, updatePokemonFailed, updatePokemonSuccess } from './pokemon.action';
 import { of } from 'rxjs';
 
 @Injectable()
@@ -36,6 +36,20 @@ export class PokemonEffects {
       ),
     ),
   ));
+
+  clonePokemon$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(clonePokemon),
+    mergeMap(action => this.entitiesService.clonePokemon(action.pokemon).pipe(
+      map(pokemon => clonePokemonSuccess({ pokemon })),
+      catchError(() => EMPTY)
+      )
+    )
+  )
+);
+
+
+  
   constructor(
     private actions$: Actions,
     private entitiesService: EntitiesService

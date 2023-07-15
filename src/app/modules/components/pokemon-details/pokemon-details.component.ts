@@ -13,6 +13,7 @@ export class PokemonDetailsComponent {
   @Input() deletedPokemonId?: number;
   @Output() pokemonDeleted: EventEmitter<number> = new EventEmitter<number>();
   @Output() pokemonUpdated: EventEmitter<Pokemon> = new EventEmitter<Pokemon>();
+  @Output() pokemonCloned: EventEmitter<Pokemon> = new EventEmitter<Pokemon>();
 
   isEditing: boolean = false;
   constructor(private store: Store<AppState>) {}
@@ -30,5 +31,10 @@ export class PokemonDetailsComponent {
 
     this.pokemon = updatedPokemon;
     this.pokemonUpdated.emit(updatedPokemon);
+  }
+
+  handlePokemonCloned(clonedPokemon: Pokemon): void {
+    this.pokemon = clonedPokemon;
+    this.pokemonCloned.emit(clonedPokemon);
   }
 }

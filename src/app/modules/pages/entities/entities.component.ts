@@ -4,7 +4,7 @@ import { EntitiesService } from '@core/services/entities.service';
 import { ViewportScroller } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { deletePokemon, loadPokemons, updatePokemon } from '@core/store/pokemon.action';
+import { clonePokemon, deletePokemon, loadPokemons, updatePokemon } from '@core/store/pokemon.action';
 import { selectPokemons } from '@core/store';
 import { AppState } from '@core/store/app.state';
 import { getPokemonList } from '@core/store/pokemon.selector';
@@ -80,6 +80,10 @@ export class EntitiesComponent implements OnInit, OnChanges {
         filteredPokemonsCopy[filteredIndex] = updatedPokemon;
         this.filteredPokemons = filteredPokemonsCopy;
     }
+  }
+
+  onClonePokemon(clonedPokemon: Pokemon): void {
+    this.store.dispatch(clonePokemon({ pokemon: clonedPokemon }));
   }
 
 

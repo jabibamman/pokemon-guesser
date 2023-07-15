@@ -76,6 +76,16 @@ export class EntitiesService {
     return of(pokemon);
   }
 
+  clonePokemon(pokemon: Pokemon): Observable<Pokemon> {
+    const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
+    const newPokemon = Object.assign(new Pokemon(), pokemon);
+    newPokemon.number = storedPokemons.length + 1;
+    newPokemon.image = this.getImageUrl(newPokemon.number, newPokemon.name);
+    storedPokemons.push(newPokemon);
+    localStorage.setItem('pokemons', JSON.stringify(storedPokemons));
+
+    return of(newPokemon);
+  }
   createPokemon(pokemon: Pokemon): Observable<Pokemon> {
     const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
     const newPokemon = Object.assign(new Pokemon(), pokemon);

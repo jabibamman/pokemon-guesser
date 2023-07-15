@@ -40,3 +40,13 @@ export const updatePokemonFailed = createAction(
   '[Pokemon] Update Pokemon Failed',
   props<{ error: any }>()
 );
+
+export const clonePokemon = createAction(
+  '[Pokemon] Clone Pokemon',
+  props<{ pokemon: Pokemon }>()
+);
+
+export const clonePokemonSuccess = createAction(
+  '[Pokemon] Clone Pokemon Success',
+  props<{ pokemon: Pokemon }>()
+);

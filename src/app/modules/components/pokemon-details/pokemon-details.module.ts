@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { PokemonDeleteModule } from '../admin/pokemon-delete/pokemon-delete.module';
 import { PokemonEditModule } from '../admin/pokemon-edit/pokemon-edit.module';
 import { FormsModule } from '@angular/forms';
+import { PokemonCloneModule } from '../admin/pokemon-clone/pokemon-clone.module';
 
 
 
@@ -17,6 +18,7 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     PokemonDeleteModule,
     PokemonEditModule,
+    PokemonCloneModule,
     FormsModule
   ],
   exports: [
@@ -25,3 +27,4 @@ import { FormsModule } from '@angular/forms';
 })
 export class PokemonDetailsModule {
  }
+ 
