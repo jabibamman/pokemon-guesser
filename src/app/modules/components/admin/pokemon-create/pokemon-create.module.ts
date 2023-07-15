@@ -1,7 +1,7 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {PokemonCreateComponent} from "@app/modules/components/admin/pokemon-create/pokemon-create.component";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
@@ -11,7 +11,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   imports: [
     CommonModule,
     FormsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    ReactiveFormsModule
   ],
   exports: [
     PokemonCreateComponent

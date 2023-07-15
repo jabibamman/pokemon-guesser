@@ -1,24 +1,51 @@
-import {Component, ElementRef, Renderer2} from "@angular/core";
+import {Component, ElementRef, OnInit, Renderer2} from "@angular/core";
 import {Pokemon} from "@core/models/pokemon.model";
 import {ExpSpeedTypes} from "@shared/enums/expspeed-types.enum";
 import {EntitiesTypes} from "@shared/enums/entities-types.enum";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: 'app-pokemon-create',
   templateUrl: './pokemon-create.component.html',
   styleUrls: ['./pokemon-create.component.css']
 })
-export class PokemonCreateComponent {
+export class PokemonCreateComponent implements OnInit {
   pokemon: Pokemon;
   expSpeedOptions = Object.values(ExpSpeedTypes);
-  typesOptions = Object.values(EntitiesTypes);
+  typesOptions: EntitiesTypes[] = Object.values(EntitiesTypes);
   sliderColor: string;
+  form: FormGroup;
 
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {
+  constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder) {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      malePct: [50, [Validators.min(0), Validators.max(100)]],
+      types: this.fb.array([
+        EntitiesTypes.none,
+        EntitiesTypes.none,
+      ]),
+      height: ['', Validators.required],
+      weight: ['', Validators.required],
+      captRate: ['', Validators.required],
+      expPoints: ['', Validators.required],
+      expSpeed: ['', Validators.required],
+      hp: ['', Validators.required],
+      attack: ['', Validators.required],
+      defense: ['', Validators.required],
+      special: ['', Validators.required],
+      speed: ['', Validators.required],
+      evolutions: ['', Validators.required],
+      legendary: [false],
+    })
     this.pokemon = new Pokemon();
     this.pokemon.malePct = 50;
     this.sliderColor = 'primary';
+    this.pokemon.types[0] = EntitiesTypes.Bug;
+    this.pokemon.types[1] = EntitiesTypes.none;
+  }
+
+  ngOnInit(): void {
   }
 
   onFileSelected(event: any) {
@@ -44,6 +71,18 @@ export class PokemonCreateComponent {
       this.renderer.setStyle(rangeInput, 'background', newColor);
     }
   }
+
+  get types(): FormArray {
+    return this.form.get('types') as FormArray;
+  }
+
+  onSubmit() {
+    console.log(this.form.value);
+
+    //TODO: ajouter le pokemon au json
+  }
+
   
   
 }
+ 
