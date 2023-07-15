@@ -9,10 +9,7 @@ import {EntitiesService} from "@core/services/entities.service";
 export class AppComponent {
   title = 'pokemon-guesser';
   constructor(private service: EntitiesService) {
-   // this.service.getPokemons();
   }
 
-  ngOnInit(): void {
-    console.log('AppComponent.ngOnInit()');
-  }
+  ngOnInit(): void { }
 }

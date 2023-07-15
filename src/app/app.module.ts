@@ -4,27 +4,19 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DeleteComponent } from './modules/pages/admin/delete/delete.component';
-import { CreateComponent } from './modules/pages/admin/create/create.component';
-import { UpdateComponent } from './modules/pages/admin/update/update.component';
-import { DuplicateComponent } from './modules/pages/admin/duplicate/duplicate.component';
-import { DetailsComponent } from './modules/pages/details/details.component';
 import { EntitiesModule } from './modules/pages/entities/entities.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { effects, reducers } from '@core/store';
 import { StoreModule } from '@ngrx/store';
 import { GameModule } from './modules/pages/game/game.module';
+import { AdminModule } from "@modules/pages/admin/admin.module";
 import { ToastrModule } from 'ngx-toastr';
+import {PokemonNavbarModule} from "@modules/components/pokemon-navbar";
 
 @NgModule({
   exports: [],
   declarations: [
-    AppComponent,
-    DeleteComponent,
-    CreateComponent,
-    UpdateComponent,
-    DuplicateComponent,
-    DetailsComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -34,8 +26,10 @@ import { ToastrModule } from 'ngx-toastr';
     HttpClientModule,
     EntitiesModule,
     GameModule,
+    AdminModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    PokemonNavbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

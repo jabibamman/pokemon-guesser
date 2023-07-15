@@ -1,66 +1,71 @@
-<mat-card *ngIf="pokemon" class="pokemon-details mt-4">
-    <mat-card-header>
-        <mat-card-title>{{pokemon.name}}</mat-card-title>
-      </mat-card-header>
-      <img mat-card-image [src]="pokemon.image" alt="{{pokemon.name}}" style="width: 128px; height: 128px; object-fit: contain;">
-      <mat-card-content>
-        <table class="table-auto">
-          <tbody>
-            <tr>
-              <td class="px-4 py-2 font-bold">Type:</td>
-              <td class="px-4 py-2" [ngClass]="{'text-blue-500': true}">{{pokemon.types}}</td>
-    
-              <td class="px-4 py-2 font-bold">Height:</td>
-              <td class="px-4 py-2" [ngClass]="{'text-green-500': true}">{{pokemon.height}}</td>
-    
-              <td class="px-4 py-2 font-bold">Weight:</td>
-              <td class="px-4 py-2" [ngClass]="{'text-red-500': true}">{{pokemon.weight}}</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-2 font-bold">Male Pct:</td>
-              <td class="px-4 py-2" [ngClass]="{'text-yellow-500': true}">{{pokemon.malePct}}</td>
-    
-              <td class="px-4 py-2 font-bold">Female Pct:</td>
-              <td class="px-4 py-2" [ngClass]="{'text-yellow-500': true}">{{pokemon.femalePct}}</td>
-    
-              <td class="px-4 py-2 font-bold">Capt Rate:</td>
-              <td class="px-4 py-2" [ngClass]="{'text-yellow-500': true}">{{pokemon.captRate}}</td>
-            </tr>
-            <tr> 
-                <td class="px-4 py-2 font-bold">Exp Points:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-pink-500': true}">{{pokemon.expPoints}}</td>
-    
-                <td class="px-4 py-2 font-bold">Exp Speed:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-pink-500': true}">{{pokemon.expSpeed}}</td>
-            </tr>
-            <tr>
-                <td class="px-4 py-2 font-bold">Base Total:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.baseTotal}}</td>
-    
-                <td class="px-4 py-2 font-bold">HP:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.hp}}</td>
-    
-                <td class="px-4 py-2 font-bold">Attack:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.attack}}</td>
-                
-                <td class="px-4 py-2 font-bold">Defense:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.defense}}</td>
-    
-                <td class="px-4 py-2 font-bold">Special:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.special}}</td>
-    
-                <td class="px-4 py-2 font-bold">Speed:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.speed}}</td>
-            </tr>
-            <tr>
-                <td class="px-4 py-2 font-bold">Evolutions:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-orange-500': true}">{{pokemon.evolutions}}</td>
-    
-                <td class="px-4 py-2 font-bold">Legendary:</td>
-                <td class="px-4 py-2" [ngClass]="{'text-orange-500': true}">{{pokemon.legendary}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </mat-card-content>
+<mat-card *ngIf="pokemon && pokemon.number !== deletedPokemonId && !isEditing" class="pokemon-details mt-4">
+  <mat-card-header>
+    <mat-card-title>{{pokemon.name}}</mat-card-title>
+  </mat-card-header>
+  <img mat-card-image [src]="pokemon.image" alt="{{pokemon.name}}" style="width: 128px; height: 128px; object-fit: contain;">
+  <mat-card-content>
+    <table class="table-auto">
+      <tbody>
+        <tr>
+          <td class="px-4 py-2 font-bold">Type:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-blue-500': true}">{{pokemon.types}}</td>
+
+          <td class="px-4 py-2 font-bold">Height:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-green-500': true}">{{pokemon.height}}</td>
+
+          <td class="px-4 py-2 font-bold">Weight:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-red-500': true}">{{pokemon.weight}}</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 font-bold">Male Pct:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-yellow-500': true}">{{pokemon.malePct}}</td>
+
+          <td class="px-4 py-2 font-bold">Female Pct:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-yellow-500': true}">{{pokemon.femalePct}}</td>
+
+          <td class="px-4 py-2 font-bold">Capt Rate:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-yellow-500': true}">{{pokemon.captRate}}</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 font-bold">Exp Points:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-pink-500': true}">{{pokemon.expPoints}}</td>
+
+          <td class="px-4 py-2 font-bold">Exp Speed:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-pink-500': true}">{{pokemon.expSpeed}}</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 font-bold">Base Total:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.baseTotal}}</td>
+
+          <td class="px-4 py-2 font-bold">HP:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.hp}}</td>
+
+          <td class="px-4 py-2 font-bold">Attack:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.attack}}</td>
+
+          <td class="px-4 py-2 font-bold">Defense:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.defense}}</td>
+
+          <td class="px-4 py-2 font-bold">Special:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.special}}</td>
+
+          <td class="px-4 py-2 font-bold">Speed:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-purple-500': true}">{{pokemon.speed}}</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 font-bold">Evolutions:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-orange-500': true}">{{pokemon.evolutions}}</td>
+
+          <td class="px-4 py-2 font-bold">Legendary:</td>
+          <td class="px-4 py-2" [ngClass]="{'text-orange-500': true}">{{pokemon.legendary}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class = "flex flex-row justify-between mt-4">
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="isEditing = !isEditing">Edit</button>
+    <app-pokemon-delete *ngIf="pokemon.number" [pokemonId]="pokemon.number" (pokemonDeleted)="handlePokemonDeleted($event)"></app-pokemon-delete>
+    <app-pokemon-clone [pokemon]="pokemon" (pokemonCloned)="handlePokemonCloned($event)"></app-pokemon-clone>
+    </div>
+  </mat-card-content>
 </mat-card>
-  
+<app-pokemon-edit *ngIf="isEditing && pokemon" [pokemon]="pokemon" (pokemonUpdated)="handlePokemonUpdated($event)"></app-pokemon-edit>

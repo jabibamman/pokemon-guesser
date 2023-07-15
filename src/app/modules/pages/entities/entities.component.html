@@ -1,4 +1,6 @@
 <app-pokemon-navbar></app-pokemon-navbar>
 <app-search (search)="search($event)"></app-search>
-<app-pokemon-details [pokemon]="selectedPokemon"></app-pokemon-details>
-<app-pokemon-list [pokemons]="filteredPokemons" (select)="selectPokemon($event)"></app-pokemon-list>
+<app-pokemon-details [pokemon]="selectedPokemon" (pokemonDeleted)="onDeletePokemon($event)" (pokemonUpdated)="onUpdatePokemon($event)"
+(pokemonCloned)="onClonePokemon($event)"></app-pokemon-details>
+<app-pokemon-list [filteredPokemons]="filteredPokemons" (select)="selectPokemon($event)"></app-pokemon-list> 
+

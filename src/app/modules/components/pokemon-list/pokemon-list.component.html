@@ -1,8 +1,8 @@
-<div class="flex flex-row flex-wrap overflow-x-auto cursor-pointer">
-    <mat-card *ngFor="let pokemon of pokemons" class="card m-2 hover:shadow-lg" (click)="select.emit(pokemon)">
-      <img mat-card-image [src]="pokemon.image" alt="{{pokemon.name}}" style="width: 64px; height: 64px; object-fit: contain;">
-      <mat-card-content>
-        <p>{{pokemon.name}}</p>
-      </mat-card-content>
-    </mat-card>
+<div class="flex flex-row flex-wrap overflow-x-auto cursor-pointer" *ngIf="filteredPokemons">
+  <mat-card *ngFor="let pokemon of filteredPokemons; trackBy: trackById" class="card m-2 hover:shadow-lg" (click)="select.emit(pokemon)">
+    <img mat-card-image [src]="pokemon.image" alt="{{pokemon.name}}" style="width: 64px; height: 64px; object-fit: contain;">
+    <mat-card-content>
+      <p>{{pokemon.name}}</p>
+    </mat-card-content>
+  </mat-card>
 </div>
