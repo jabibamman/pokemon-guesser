@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Pokemon } from "@core/models/pokemon.model";
 import {HttpClient} from "@angular/common/http";
-import { Observable, map, of, tap, throwError } from 'rxjs';
+import { Observable, map, of, tap, } from 'rxjs';
 import { EntitiesTypes } from '@shared/enums/entities-types.enum';
 
 @Injectable({
@@ -16,7 +16,7 @@ export class EntitiesService {
     if (storedPokemons) {
       return of(JSON.parse(storedPokemons));
     }
-    
+
     return this.http.get<[any]>('assets/pokemons/Data.json').pipe(
       map(data => data.map(item => {
         const pokemon = Object.assign(new Pokemon(), item);
@@ -37,23 +37,28 @@ export class EntitiesService {
       })
     );
   }
-  
+
   private getImageUrl(id: number, name: string): string {
     const idString = id.toString().padStart(3, '0');
     const formattedName = idString + name;
-  
+
     return `assets/pokemons/images/${formattedName}.webp`;
+  }
+
+  getLastPokemonNumber(): number {
+    const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
+    return storedPokemons.length;
   }
 
   deletePokemon(id: number): Observable<number> {
     const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
     const index = storedPokemons.findIndex((pokemon: Pokemon) => pokemon.number === id);
-    
+
     if (index !== -1) {
       storedPokemons.splice(index, 1);
       localStorage.setItem('pokemons', JSON.stringify(storedPokemons));
     }
-  
+
     return of(id);
   }
 
@@ -69,4 +74,16 @@ export class EntitiesService {
   
     return of(pokemon);
   }
+
+  createPokemon(pokemon: Pokemon): Observable<Pokemon> {
+    const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
+    const newPokemon = Object.assign(new Pokemon(), pokemon);
+    newPokemon.number = storedPokemons.length + 1;
+    newPokemon.image = this.getImageUrl(newPokemon.number, newPokemon.name);
+    storedPokemons.push(newPokemon);
+    localStorage.setItem('pokemons', JSON.stringify(storedPokemons));
+
+    return of(newPokemon);
+  }
 }
+

@@ -27,6 +27,8 @@ export class PokemonDetailsComponent {
 
   handlePokemonUpdated(updatedPokemon: Pokemon): void {
     this.isEditing = false;
+
+    this.pokemon = updatedPokemon;
     this.pokemonUpdated.emit(updatedPokemon);
   }
 }

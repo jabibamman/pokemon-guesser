@@ -24,7 +24,7 @@ export class Pokemon {
     electricDmg!: number;
     grassDmg!: number;
     iceDmg!: number;
-    fightDmg!: number; 
+    fightDmg!: number;
     poisonDmg!: number;
     groundDmg!: number;
     flyingDmg!: number;
@@ -37,4 +37,3 @@ export class Pokemon {
     legendary!: number;
     image!: string;
 }
-
