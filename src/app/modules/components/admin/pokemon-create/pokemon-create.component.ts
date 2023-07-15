@@ -6,7 +6,6 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {EntitiesService} from "@core/services/entities.service";
 import {Subscription} from "rxjs";
 import {NotificationService} from "@core/services/notification.service";
-import {HttpClient} from "@angular/common/http";
 import {Store} from "@ngrx/store";
 import {AppState} from "@core/store/app.state";
 import {createPokemon} from "@core/store/pokemon.action";
@@ -29,8 +28,7 @@ export class PokemonCreateComponent implements OnInit, OnDestroy, OnChanges {
 
 
   constructor(private store: Store<AppState>, private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder,
-              private entitiesService: EntitiesService, private notificationService: NotificationService,
-              private http: HttpClient) {
+              private entitiesService: EntitiesService, private notificationService: NotificationService) {
     this.expSpeedOptions = Object.values(ExpSpeedTypes);
     this.typesOptions = Object.values(EntitiesTypes);
     this.typesOptionsNotNone = this.typesOptions.filter(type => type !== EntitiesTypes.none);
@@ -88,6 +86,7 @@ export class PokemonCreateComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateGender() {
+    this.hideRange = !this.hideRange;
     if (this.hideRange) {
       this.pokemon.malePct = 0;
       this.pokemon.femalePct = 0;
