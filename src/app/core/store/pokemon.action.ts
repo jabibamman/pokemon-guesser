@@ -24,3 +24,19 @@ export const deletePokemonFailed = createAction(
   '[Pokemon] Delete Pokemon Failed',
   props<{ error: any }>()
 );
+
+
+export const updatePokemon = createAction(
+  '[Pokemon] Update Pokemon',
+  props<{ pokemon: Pokemon }>()
+);
+
+export const updatePokemonSuccess = createAction(
+  '[Pokemon] Update Pokemon Success',
+  props<{ pokemon: Pokemon }>()
+);
+
+export const updatePokemonFailed = createAction(
+  '[Pokemon] Update Pokemon Failed',
+  props<{ error: any }>()
+);

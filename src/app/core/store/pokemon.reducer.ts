@@ -1,4 +1,4 @@
-import { loadPokemonsSuccess, loadPokemons, deletePokemon, deletePokemonSuccess, deletePokemonFailed } from './pokemon.action';
+import { loadPokemonsSuccess, loadPokemons, deletePokemon, deletePokemonSuccess, deletePokemonFailed, updatePokemonSuccess, updatePokemonFailed } from './pokemon.action';
 import { createReducer, on } from '@ngrx/store';
 import { Pokemon } from "@core/models/pokemon.model";
 
@@ -11,11 +11,16 @@ export const pokemonReducer = createReducer(
   on(loadPokemons, state => [...state]),
   on(loadPokemonsSuccess, (state, { pokemons }) => pokemons),
   on(deletePokemonSuccess, onDeletePokemon),
-
   on(deletePokemonFailed, (state, { error }) => {
     console.error('Error deleting Pokemon:', error);
     return state;
+  }),
+  on(updatePokemonSuccess, onUpdatePokemon),
+  on(updatePokemonFailed, (state, { error }) => {
+    console.error('Error updating Pokemon:', error);
+    return state;
   })
+
 );
 
 
@@ -23,4 +28,11 @@ export const pokemonReducer = createReducer(
 function onDeletePokemon(state: Pokemon[], action: { id: number }) {
     const updatedPokemons = state.filter(pokemon => pokemon.number !== action.id);
     return updatedPokemons;
+}
+
+function onUpdatePokemon(state: Pokemon[], action: { pokemon: Pokemon }) {
+  const updatedPokemons = state.map(pokemon => 
+    pokemon.number === action.pokemon.number ? action.pokemon : pokemon
+  );
+  return updatedPokemons;
 }

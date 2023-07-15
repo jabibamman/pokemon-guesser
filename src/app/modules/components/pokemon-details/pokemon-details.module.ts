@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { PokemonDetailsComponent } from './pokemon-details.component';
 import { MatCardModule } from '@angular/material/card';
 import { PokemonDeleteModule } from '../admin/pokemon-delete/pokemon-delete.module';
+import { PokemonEditModule } from '../admin/pokemon-edit/pokemon-edit.module';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -13,7 +15,9 @@ import { PokemonDeleteModule } from '../admin/pokemon-delete/pokemon-delete.modu
   imports: [
     CommonModule,
     MatCardModule,
-    PokemonDeleteModule
+    PokemonDeleteModule,
+    PokemonEditModule,
+    FormsModule
   ],
   exports: [
     PokemonDetailsComponent

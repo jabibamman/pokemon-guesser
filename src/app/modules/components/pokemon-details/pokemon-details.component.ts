@@ -12,8 +12,9 @@ export class PokemonDetailsComponent {
   @Input() pokemon?: Pokemon;
   @Input() deletedPokemonId?: number;
   @Output() pokemonDeleted: EventEmitter<number> = new EventEmitter<number>();
+  @Output() pokemonUpdated: EventEmitter<Pokemon> = new EventEmitter<Pokemon>();
 
-
+  isEditing: boolean = false;
   constructor(private store: Store<AppState>) {}
 
   handlePokemonDeleted(id: number): void {
@@ -22,5 +23,10 @@ export class PokemonDetailsComponent {
       localStorage.removeItem('selectedPokemon');
       this.pokemonDeleted.emit(id); 
     }  
+  }
+
+  handlePokemonUpdated(updatedPokemon: Pokemon): void {
+    this.isEditing = false;
+    this.pokemonUpdated.emit(updatedPokemon);
   }
 }

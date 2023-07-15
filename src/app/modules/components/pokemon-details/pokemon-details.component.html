@@ -1,4 +1,4 @@
-<mat-card *ngIf="pokemon && pokemon.number !== deletedPokemonId" class="pokemon-details mt-4">
+<mat-card *ngIf="pokemon && pokemon.number !== deletedPokemonId && !isEditing" class="pokemon-details mt-4">
   <mat-card-header>
     <mat-card-title>{{pokemon.name}}</mat-card-title>
   </mat-card-header>
@@ -61,6 +61,8 @@
         </tr>
       </tbody>
     </table>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="isEditing = !isEditing">Edit</button>
     <app-pokemon-delete *ngIf="pokemon.number" [pokemonId]="pokemon.number" (pokemonDeleted)="handlePokemonDeleted($event)"></app-pokemon-delete>
   </mat-card-content>
 </mat-card>
+<app-pokemon-edit *ngIf="isEditing && pokemon" [pokemon]="pokemon" (pokemonUpdated)="handlePokemonUpdated($event)"></app-pokemon-edit>

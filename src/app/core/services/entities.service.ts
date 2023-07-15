@@ -56,4 +56,17 @@ export class EntitiesService {
   
     return of(id);
   }
+
+  updatePokemon(pokemon: Pokemon): Observable<Pokemon> {
+    console.log('updatePokemon', pokemon.number);
+    const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
+    const index = storedPokemons.findIndex((p: Pokemon) => p.number === pokemon.number);
+    
+    if (index !== -1) {
+      storedPokemons[index] = pokemon;
+      localStorage.setItem('pokemons', JSON.stringify(storedPokemons));
+    }
+  
+    return of(pokemon);
+  }
 }
