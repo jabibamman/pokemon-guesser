@@ -9,6 +9,7 @@ import { PokemonNavbarModule } from '@app/modules/components/pokemon-navbar';
 import { SearchModule } from '@app/modules/components/search/search.module';
 import { PokemonDetailsModule } from '@app/modules/components/pokemon-details/pokemon-details.module';
 import { PokemonListModule } from '@app/modules/components/pokemon-list/pokemon-list.module';
+import { PokemonDeleteModule } from '@app/modules/components/admin/pokemon-delete/pokemon-delete.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { PokemonListModule } from '@app/modules/components/pokemon-list/pokemon-
     PokemonNavbarModule,
     SearchModule,
     PokemonDetailsModule,
-    PokemonListModule
+    PokemonListModule,
+    PokemonDeleteModule
   ],
   providers: [
     EntitiesService

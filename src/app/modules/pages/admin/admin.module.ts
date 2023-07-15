@@ -6,6 +6,7 @@ import { PokemonNavbarModule } from "@modules/components/pokemon-navbar";
 import {SearchModule} from "@modules/components/search/search.module";
 import {PokemonListModule} from "@modules/components/pokemon-list/pokemon-list.module";
 import { PokemonCreateModule } from '@app/modules/components/admin/pokemon-create/pokemon-create.module';
+import { PokemonDeleteModule } from '@app/modules/components/admin/pokemon-delete/pokemon-delete.module';
 
 
 @NgModule({
@@ -17,8 +18,8 @@ import { PokemonCreateModule } from '@app/modules/components/admin/pokemon-creat
     RouterModule,
     PokemonNavbarModule,
     SearchModule,
-    PokemonListModule,
-    PokemonCreateModule
+    PokemonCreateModule,
+    PokemonDeleteModule
   ]
 })
 export class AdminModule { }
