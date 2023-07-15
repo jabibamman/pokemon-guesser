@@ -48,26 +48,20 @@ export class PokemonEditComponent implements OnChanges {
     });
   }
 
-  updatePokemon(updatedPokemon: Pokemon): void {
-    console.log('Voici le pokemon mis à jour :', updatedPokemon);
-  
+  updatePokemon(updatedPokemon: Pokemon): void {  
     updatedPokemon.number = this.pokemon.number;
-  
     updatedPokemon.types = [this.form.value.type1, this.form.value.type2];
-    
-    this.store.dispatch(updatePokemon({ pokemon: updatedPokemon }));
-    this.pokemonUpdated.emit(updatedPokemon);
-  
-    this.pokemon = updatedPokemon;
-    this.entitiesService.saveImageToLocalStorage(this.form.value.imageUrl);
+    updatedPokemon.image = this.form.value.image;
 
+    this.store.dispatch(updatePokemon({ pokemon: updatedPokemon }));
+    this.pokemon = updatedPokemon;
+    this.entitiesService.saveImageToLocalStorage(this.form.value.image);
+    this.pokemonUpdated.emit(updatedPokemon);
   }
 
 
   updateFormValues(): void {
     if (this.pokemon) {
-      console.log('PokemonEditComponent constructor()', this.pokemon);
-
       this.form.patchValue({
         image: this.pokemon.image,
         name: this.pokemon.name,
@@ -96,5 +90,19 @@ export class PokemonEditComponent implements OnChanges {
     this.updateFormValues();
   }
 
-}
 
+  onFileChange(event: any) {
+    const reader = new FileReader();
+  
+    if(event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+  
+      reader.onload = () => {
+        this.form.patchValue({
+          image: reader.result as string
+        });
+      };
+    }
+  }
+}  

@@ -65,7 +65,6 @@ export class EntitiesService {
   }
 
   updatePokemon(pokemon: Pokemon): Observable<Pokemon> {
-    console.log('updatePokemon', pokemon.number);
     const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
     const index = storedPokemons.findIndex((p: Pokemon) => p.number === pokemon.number);
     
