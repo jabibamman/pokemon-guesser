@@ -52,7 +52,9 @@
             </td>
             <td class="px-4 py-2 font-bold">Exp Speed:</td>
             <td class="px-4 py-2">
-              <input formControlName="expSpeed" class="border border-pink-500 px-2 py-1 rounded" />
+              <select formControlName="expSpeed" class="border border-pink-500 px-2 py-1 rounded">
+                <option *ngFor="let speed of expSpeedTypes" [value]="speed">{{speed}}</option>
+              </select>
             </td>
           </tr>
           <tr>

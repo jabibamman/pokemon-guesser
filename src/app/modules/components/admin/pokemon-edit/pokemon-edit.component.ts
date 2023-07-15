@@ -4,6 +4,7 @@ import { Pokemon } from '@core/models/pokemon.model';
 import { AppState } from '@core/store/app.state';
 import { updatePokemon } from '@core/store/pokemon.action';
 import { Store } from '@ngrx/store';
+import { ExpSpeedTypes } from '@shared/enums/expspeed-types.enum';
 @Component({
   selector: 'app-pokemon-edit',
   templateUrl: './pokemon-edit.component.html',
@@ -13,8 +14,10 @@ export class PokemonEditComponent implements OnChanges {
   @Input() pokemon!: Pokemon;
   @Output() pokemonUpdated: EventEmitter<Pokemon> = new EventEmitter<Pokemon>();
   form: FormGroup;
-  
+  expSpeedTypes: string[];
+
   constructor(private store: Store<AppState>, private fb: FormBuilder) {
+    this.expSpeedTypes = Object.values(ExpSpeedTypes);
 
     this.form = this.fb.group({
       name: ['', Validators.required],
