@@ -58,18 +58,8 @@ export class PokemonCreateComponent implements OnInit {
 
   updateSliderColor(event: Event) {
     const rangeInput = event.target as HTMLInputElement;
-    const percentage = this.pokemon.malePct / 100;
-    const blueValue = Math.round(255 * percentage);
-    const pinkValue = Math.round(255 * (1 - percentage));
-  
-    if (percentage === 0) {
-      this.renderer.setStyle(rangeInput, 'background', `blue`);
-    } else if (percentage === 1) {
-      this.renderer.setStyle(rangeInput, 'background', `rgb(255, 0, ${pinkValue})`);
-    } else {
-      const newColor = `linear-gradient(90deg, blue 0%, blue ${percentage * 100}%, rgb(255, 0, ${pinkValue}) ${percentage * 100}%, rgb(255, 0, ${pinkValue}) 100%)`;
-      this.renderer.setStyle(rangeInput, 'background', newColor);
-    }
+    const newColor = `linear-gradient(90deg, rgb(96 165 250) 0%, rgb(96 165 250) ${this.pokemon.malePct}%, rgb(244 114 182) ${this.pokemon.malePct}%, rgb(244 114 182) 100%)`;
+    this.renderer.setStyle(rangeInput, 'background', newColor);
   }
 
   get types(): FormArray {
