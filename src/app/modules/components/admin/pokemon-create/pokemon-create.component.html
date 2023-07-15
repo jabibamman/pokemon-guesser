@@ -109,8 +109,8 @@
           </td>
 
           <td class="px-4 py-2 font-bold">
-            <div class="text-red-600" *ngIf="!this.form.valid">✗ Missing or incorrect values in the form</div>
-            <div class="text-green-600" *ngIf="this.form.valid">✔ Ready to create</div>
+            <div class="text-red-600" *ngIf="!this.form.valid || this.fileToUpload.name === ''">✗ Missing or incorrect values in the form</div>
+            <div class="text-green-600" *ngIf="this.form.valid && this.fileToUpload.name !== ''">✔ Ready to create</div>
           </td>
         </tr>
       </tbody>

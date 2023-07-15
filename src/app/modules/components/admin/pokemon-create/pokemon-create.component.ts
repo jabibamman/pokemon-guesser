@@ -1,15 +1,19 @@
-import {Component, ElementRef, OnInit, Renderer2} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from "@angular/core";
 import {Pokemon} from "@core/models/pokemon.model";
 import {ExpSpeedTypes} from "@shared/enums/expspeed-types.enum";
 import {EntitiesTypes} from "@shared/enums/entities-types.enum";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {EntitiesService} from "@core/services/entities.service";
+import {Subscription} from "rxjs";
+import {NotificationService} from "@core/services/notification.service";
 
 @Component({
   selector: 'app-pokemon-create',
   templateUrl: './pokemon-create.component.html',
   styleUrls: ['./pokemon-create.component.css']
 })
-export class PokemonCreateComponent implements OnInit {
+export class PokemonCreateComponent implements OnInit, OnDestroy {
+  private subscription: Subscription = new Subscription();
   pokemon: Pokemon;
   expSpeedOptions: ExpSpeedTypes[];
   typesOptions: EntitiesTypes[];
@@ -19,7 +23,7 @@ export class PokemonCreateComponent implements OnInit {
   fileToUpload: File;
 
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder) {
+  constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder, private entitiesService: EntitiesService, private notificationService: NotificationService) {
     this.expSpeedOptions = Object.values(ExpSpeedTypes);
     this.typesOptions = Object.values(EntitiesTypes);
     this.typesOptionsNotNone = this.typesOptions.filter(type => type !== EntitiesTypes.none);
@@ -44,6 +48,7 @@ export class PokemonCreateComponent implements OnInit {
     this.pokemon = new Pokemon();
     this.pokemon.malePct = 50;
     this.updateFemalePercentage()
+    this.pokemon.legendary = 0;
     this.fileToUpload = new File([], '');
   }
 
@@ -79,13 +84,27 @@ export class PokemonCreateComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.form.value);
-    console.log(this.pokemon);
-
     if (this.form.valid && this.fileToUpload.name !== '') {
-      //TODO: ajouter le pokemon au json
+      this.pokemon.types[0] = this.form.value.type1;
+      this.pokemon.types[1] = this.form.value.type2;
+      this.pokemon.baseTotal = this.pokemon.hp + this.pokemon.attack + this.pokemon.defense + this.pokemon.special + this.pokemon.speed;
+      this.pokemon.image = this.fileToUpload.name;
+
+      console.log(this.pokemon);
+      this.subscription.add(
+        this.entitiesService.createPokemon(this.pokemon).subscribe(
+          (res) => {
+            console.log(res);
+          }
+        )
+      );
+      this.notificationService.showSuccess(this.pokemon.name+' has been created!', 'Success');
     } else {
       console.log('invalid form');
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
