@@ -17,10 +17,12 @@
       </div>
       <input type="text" id="guess" [(ngModel)]="userGuess" class="border px-4 py-2 rounded-lg w-full" *ngIf="gameStarted">
       <button (click)="handleGuess($event)" class="bg-blue-500 text-white px-4 py-2 mt-2 text-center" *ngIf="gameStarted">Guess</button>
-      <p class="mt-6 text-center">Remaining Guesses: {{ remainingGuesses }}</p>
+      <p class="mt-6 text-center" *ngIf="gameStarted"> Remaining Guesses: {{ remainingGuesses }}</p>
     </div>
-
-    <p *ngIf="!gameStarted" class="mt-6 text-center">The target Pokémon was: {{ (targetPokemon$ | async)?.name }}</p>
+    <p *ngIf="(!gameStarted && (targetPokemon$ | async))" class="mt-6 text-center">The target Pokémon was: {{ (targetPokemon$ | async)?.name }}</p>
+    <div class="flex justify-center items-center mt-6" *ngIf="(!gameStarted && (targetPokemon$ | async))">
+      <img [src]="(targetPokemon$ | async)?.image" alt="{{(targetPokemon$ | async)?.name}}" class="w-64 h-64 object-contain" *ngIf="(!gameStarted && (targetPokemon$ | async))">
+    </div>
 
     <div *ngIf="gameStarted">
       <div class="flex justify-center items-center mt-6">
