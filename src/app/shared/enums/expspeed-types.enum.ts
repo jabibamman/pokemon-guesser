@@ -1,6 +1,6 @@
 export enum ExpSpeedTypes {
-    Slow = 'slow',
+    Slow = 'Slow',
     Medium_Slow = 'Medium Slow',
     Medium_Fast = 'Medium Fast',
-    Fast = 'Fast', 
+    Fast = 'Fast',
 }
