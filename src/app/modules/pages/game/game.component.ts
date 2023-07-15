@@ -4,10 +4,10 @@ import { Store, select } from '@ngrx/store';
 import { loadPokemons } from '@core/store/pokemon.action';
 import { selectPokemons } from '@core/store/index';
 import { Pokemon } from '@core/models/pokemon.model';
-import { Observable, Subscription, map, take } from 'rxjs';
+import { Observable, Subscription, map, of, take } from 'rxjs';
 import { AppState } from '@core/store/app.state';
 import { ToastrService } from 'ngx-toastr';
-import { addGuessedPokemon, decrementRemainingGuesses, makeGuess, resetGuessedPokemons, resetHints, startNewGame } from '@core/store/game.action';
+import { addGuessedPokemon, decrementRemainingGuesses, makeGuess, resetGuessedPokemons, resetHints, setRemainingGuesses, startNewGame } from '@core/store/game.action';
 import { GameState, setGameStarted, setTargetPokemon } from '@core/store/game.state';
 import { selectGuessedPokemonsHints } from '@core/store/game.selector';
 import { addHint } from '@core/store/game.action';
@@ -19,7 +19,6 @@ import { addHint } from '@core/store/game.action';
 })
 export class GameComponent implements OnInit, OnDestroy {
   pokemons$: Observable<Pokemon[]>;
-  targetPokemon: Pokemon;
   remainingGuesses: number = 5;
   userGuess: string = '';
   hintMessage: string[][] = [];
@@ -30,20 +29,24 @@ export class GameComponent implements OnInit, OnDestroy {
   hintMessage$: Observable<string[][]>;
   guessedPokemons$: Observable<Pokemon[]>;
   guessedPokemonsHints$: Observable<string[][]>;
+  targetPokemon$: Observable<Pokemon | null>;
+  userSetRemainingGuesses: number = 5;
 
   private subscription: Subscription = new Subscription();
   @ViewChild('levelUpSound') levelUpSound!: ElementRef<HTMLAudioElement>;
   @ViewChild('pokemonBattleSound') pokemonBattleSound!: ElementRef<HTMLAudioElement>;
   @ViewChild('youWereClose') youWereClose!: ElementRef<HTMLAudioElement>;
+  targetPokemon: Pokemon;
 
   constructor(private store: Store<AppState>, private toastr: ToastrService, protected notificationService: NotificationService) {
-    this.targetPokemon = new Pokemon();
     this.pokemons$ = this.store.select(selectPokemons);
     this.gameState$ = this.store.select('game');
     this.remainingGuesses$ = this.store.select(state => state.game.remainingGuesses);
     this.hintMessage$ = this.store.select(state => state.game.hintMessage);
     this.guessedPokemons$ = this.store.select(state => state.game.guessedPokemons);
     this.guessedPokemonsHints$ = this.store.pipe(select(selectGuessedPokemonsHints));
+    this.targetPokemon = new Pokemon();
+    this.targetPokemon$ = of(null);
   }
 
   ngOnInit(): void {
@@ -104,7 +107,7 @@ export class GameComponent implements OnInit, OnDestroy {
     if (!this.gameStarted) {
       this.notificationService.sendMessage('game started');
       this.store.dispatch(setGameStarted({ gameStarted: true }));
-      this.store.dispatch(startNewGame());
+      this.store.dispatch(startNewGame({ remainingGuesses: this.userSetRemainingGuesses }));
       this.store.dispatch(resetHints());
       this.store.dispatch(resetGuessedPokemons());
 
@@ -115,9 +118,10 @@ export class GameComponent implements OnInit, OnDestroy {
           this.store.dispatch(setTargetPokemon({ pokemon: this.targetPokemon }));
         });
 
+      this.targetPokemon$ = this.store.pipe(select(state => state.game.targetPokemon));
       this.pokemonBattleSound.nativeElement.play();
     }
-  }
+}
 
 
   handleGuess(event: any): void {
@@ -182,18 +186,21 @@ export class GameComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
-  getHint(userGuess: string, targetPokemon: Pokemon): string[] {
+  getHint(userGuess: string, targetPokemon: Pokemon | null): string[] {
     let hint: string[] = [];
     const stats: (keyof Pokemon)[] = ["hp", "attack", "defense", "speed"];
-
+  
+    if (!this.gameStarted) {
+      return hint;
+    }
+  
     this.pokemons$
       .pipe(
         take(1),
         map(pokemons => pokemons.find(pokemon => pokemon.name.toLowerCase() === userGuess.toLowerCase()))
       )
       .subscribe(guessedPokemon => {
-        if (guessedPokemon) {
+        if (guessedPokemon && targetPokemon) {
           for (let stat of stats) {
             if (stat !== 'types') {
               if (guessedPokemon[stat] > targetPokemon[stat]) {
@@ -205,7 +212,7 @@ export class GameComponent implements OnInit, OnDestroy {
               }
             }
           }
-
+  
           const commonTypes = guessedPokemon.types.filter(type => type !== 'none' && targetPokemon.types.includes(type));
           if (commonTypes.length > 0) {
             hint.push(`Your guessed Pokemon shares these type(s) with the target Pokemon: ${commonTypes.join(', ')}`);
@@ -215,9 +222,8 @@ export class GameComponent implements OnInit, OnDestroy {
         } else {
           hint.push('The guessed Pokemon was not found.');
         }
-
       });
-
+  
     return hint;
   }
 
@@ -226,4 +232,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   }
 
+  setRemainingGuesses(value: number) {
+    this.store.dispatch(setRemainingGuesses({ remainingGuesses: value }));
 }
+
+} 
