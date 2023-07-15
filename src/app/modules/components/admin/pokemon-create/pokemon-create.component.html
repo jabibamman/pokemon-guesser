@@ -15,8 +15,7 @@
         </tr>
         <tr>
           <td class="px-4 py-2">
-            <mat-checkbox class="ml-4" [(ngModel)]="hideRange"
-                          (change)="updateGender()" formControlName="legendary">
+            <mat-checkbox class="ml-4" (change)="updateGender()">
               No gender
             </mat-checkbox>
           </td>
@@ -96,7 +95,6 @@
           </td>
           <td class="px-4 py-2">
             <mat-checkbox class="ml-4"
-                  [(ngModel)]="pokemon.legendary"
                   (change)="pokemon.legendary = ((pokemon.legendary === 1 ? 0 : 1))" formControlName="legendary">
               Legendary
             </mat-checkbox>
@@ -110,8 +108,8 @@
           </td>
 
           <td class="px-4 py-2 font-bold">
-            <div class="text-red-600" *ngIf="!this.form.valid || this.fileToUpload.name === ''">✗ Missing or incorrect values in the form</div>
-            <div class="text-green-600" *ngIf="this.form.valid && this.fileToUpload.name !== ''">✔ Ready to create</div>
+            <div class="text-red-600" *ngIf="!this.form.valid">✗ Missing or incorrect values in the form</div>
+            <div class="text-green-600" *ngIf="this.form.valid">✔ Ready to create</div>
           </td>
         </tr>
       </tbody>
