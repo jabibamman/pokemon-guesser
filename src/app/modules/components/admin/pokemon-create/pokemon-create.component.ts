@@ -6,6 +6,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {EntitiesService} from "@core/services/entities.service";
 import {Subscription} from "rxjs";
 import {NotificationService} from "@core/services/notification.service";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-pokemon-create',
@@ -23,7 +24,9 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
   fileToUpload: File;
 
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder, private entitiesService: EntitiesService, private notificationService: NotificationService) {
+  constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder,
+              private entitiesService: EntitiesService, private notificationService: NotificationService,
+              private http: HttpClient) {
     this.expSpeedOptions = Object.values(ExpSpeedTypes);
     this.typesOptions = Object.values(EntitiesTypes);
     this.typesOptionsNotNone = this.typesOptions.filter(type => type !== EntitiesTypes.none);
@@ -95,9 +98,33 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
         this.entitiesService.createPokemon(this.pokemon).subscribe(
           (res) => {
             console.log(res);
+          },
+          (err) => {
+            console.log(err);
+            this.notificationService.showError('An error occured while creating the pokemon', 'Error');
+            return;
           }
         )
       );
+
+      const pokeNumber = this.entitiesService.getLastPokemonNumber()+1;
+      const fileReader = new FileReader();
+
+      fileReader.onload = (event: any) => {
+        const base64Image = event.target.result;
+        this.pokemon.image = base64Image;
+        localStorage.setItem(pokeNumber+this.pokemon.name+'.webp', base64Image);
+        console.log('Image sauvegardée avec succès dans le localStorage!');
+      };
+
+      fileReader.onerror = (error) => {
+        console.error('Erreur lors de la lecture de l\'image :', error);
+        this.notificationService.showError('An error occured while uploading the file', 'Error');
+        return;
+      };
+
+      fileReader.readAsDataURL(this.fileToUpload);
+
       this.notificationService.showSuccess(this.pokemon.name+' has been created!', 'Success');
     } else {
       console.log('invalid form');

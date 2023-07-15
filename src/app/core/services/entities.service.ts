@@ -45,6 +45,11 @@ export class EntitiesService {
     return `assets/pokemons/images/${formattedName}.webp`;
   }
 
+  getLastPokemonNumber(): number {
+    const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
+    return storedPokemons.length;
+  }
+
   deletePokemon(id: number): Observable<number> {
     const storedPokemons = JSON.parse(localStorage.getItem('pokemons') || '[]');
     const index = storedPokemons.findIndex((pokemon: Pokemon) => pokemon.number === id);
