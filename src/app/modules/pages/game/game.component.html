@@ -20,6 +20,8 @@
       <p class="mt-6 text-center">Remaining Guesses: {{ remainingGuesses }}</p>
     </div>
 
+    <p *ngIf="!gameStarted" class="mt-6 text-center">The target Pokémon was: {{ (targetPokemon$ | async)?.name }}</p>
+
     <div *ngIf="gameStarted">
       <div class="flex justify-center items-center mt-6">
         <div style="height: 400px; overflow-y: auto;">
