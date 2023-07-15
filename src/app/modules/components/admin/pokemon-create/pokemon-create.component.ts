@@ -13,12 +13,14 @@ export class PokemonCreateComponent implements OnInit {
   pokemon: Pokemon;
   expSpeedOptions: ExpSpeedTypes[];
   typesOptions: EntitiesTypes[];
+  typesOptionsNotNone: EntitiesTypes[];
   form: FormGroup;
 
 
   constructor(private renderer: Renderer2, private el: ElementRef, private fb: FormBuilder) {
     this.expSpeedOptions = Object.values(ExpSpeedTypes);
     this.typesOptions = Object.values(EntitiesTypes);
+    this.typesOptionsNotNone = this.typesOptions.filter(type => type !== EntitiesTypes.none);
     this.form = this.fb.group({
       name: ['', Validators.required],
       malePct: [50, [Validators.min(0), Validators.max(100)]],
