@@ -7,7 +7,7 @@ import { Pokemon } from '@core/models/pokemon.model';
 import { Observable, Subscription, map, of, take } from 'rxjs';
 import { AppState } from '@core/store/app.state';
 import { ToastrService } from 'ngx-toastr';
-import { addGuessedPokemon, decrementRemainingGuesses, makeGuess, resetGuessedPokemons, resetHints, startNewGame } from '@core/store/game.action';
+import { addGuessedPokemon, decrementRemainingGuesses, makeGuess, resetGuessedPokemons, resetHints, setRemainingGuesses, startNewGame } from '@core/store/game.action';
 import { GameState, setGameStarted, setTargetPokemon } from '@core/store/game.state';
 import { selectGuessedPokemonsHints } from '@core/store/game.selector';
 import { addHint } from '@core/store/game.action';
@@ -30,6 +30,7 @@ export class GameComponent implements OnInit, OnDestroy {
   guessedPokemons$: Observable<Pokemon[]>;
   guessedPokemonsHints$: Observable<string[][]>;
   targetPokemon$: Observable<Pokemon | null>;
+  userSetRemainingGuesses: number = 5;
 
   private subscription: Subscription = new Subscription();
   @ViewChild('levelUpSound') levelUpSound!: ElementRef<HTMLAudioElement>;
@@ -46,7 +47,6 @@ export class GameComponent implements OnInit, OnDestroy {
     this.guessedPokemonsHints$ = this.store.pipe(select(selectGuessedPokemonsHints));
     this.targetPokemon = new Pokemon();
     this.targetPokemon$ = of(null);
-
   }
 
   ngOnInit(): void {
@@ -107,7 +107,7 @@ export class GameComponent implements OnInit, OnDestroy {
     if (!this.gameStarted) {
       this.notificationService.sendMessage('game started');
       this.store.dispatch(setGameStarted({ gameStarted: true }));
-      this.store.dispatch(startNewGame());
+      this.store.dispatch(startNewGame({ remainingGuesses: this.userSetRemainingGuesses }));
       this.store.dispatch(resetHints());
       this.store.dispatch(resetGuessedPokemons());
 
@@ -118,9 +118,7 @@ export class GameComponent implements OnInit, OnDestroy {
           this.store.dispatch(setTargetPokemon({ pokemon: this.targetPokemon }));
         });
 
-        this.targetPokemon$ = this.store.pipe(select(state => state.game.targetPokemon));
-
-
+      this.targetPokemon$ = this.store.pipe(select(state => state.game.targetPokemon));
       this.pokemonBattleSound.nativeElement.play();
     }
 }
@@ -228,9 +226,14 @@ export class GameComponent implements OnInit, OnDestroy {
   
     return hint;
   }
+
   addHintMessage(message: string[]): void {
     this.hintMessage.push(message);
 
   }
+
+  setRemainingGuesses(value: number) {
+    this.store.dispatch(setRemainingGuesses({ remainingGuesses: value }));
+}
 
 } 

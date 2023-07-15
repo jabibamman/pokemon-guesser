@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { startNewGame, makeGuess, gameOver, decrementRemainingGuesses, addGuessedPokemon, resetHints, resetGuessedPokemons, addHint } from './game.action';
+import { startNewGame, makeGuess, gameOver, decrementRemainingGuesses, addGuessedPokemon, resetHints, resetGuessedPokemons, addHint, setRemainingGuesses } from './game.action';
 import { GameState, setGameStarted, setTargetPokemon } from './game.state';
 
 export const initialState: GameState = {
@@ -18,7 +18,8 @@ export const gameReducer = createReducer(
     initialState,
     on(setTargetPokemon, (state, { pokemon }) => ({ ...state, targetPokemon: pokemon })),
     on(setGameStarted, (state, { gameStarted }) => ({ ...state, gameStarted })),
-    on(startNewGame, state => ({ ...state, gameStarted: true, remainingGuesses: 5, userGuess: '', hintMessage: [], guessedPokemon: null })),
+    on(startNewGame, (state, { remainingGuesses }) => ({ ...state, gameStarted: true, remainingGuesses, userGuess: '', hintMessage: [], guessedPokemon: null })),
+    on(setRemainingGuesses, (state, { remainingGuesses }) => ({ ...state, remainingGuesses })),
     on(makeGuess, (state, { guess }) => ({ ...state, userGuess: guess })),
     on(decrementRemainingGuesses, state => ({ ...state, remainingGuesses: state.remainingGuesses - 1 })),
     on(resetHints, state => ({ ...state, hintMessage: [] })),

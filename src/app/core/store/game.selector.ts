@@ -7,3 +7,8 @@ export const selectGuessedPokemonsHints = createSelector(
     selectGameState,
     (state: GameState) => state.hintMessage
 );
+
+export const selectRemainingGuesses = createSelector(
+    selectGameState,
+    (state: GameState) => state.remainingGuesses
+);
