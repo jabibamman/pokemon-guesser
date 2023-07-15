@@ -33,6 +33,11 @@ export class EntitiesComponent implements OnInit {
       this.filteredPokemons = pokemons;
     });
 
+    const storedSelectedPokemon = localStorage.getItem('selectedPokemon');
+    if (storedSelectedPokemon) {
+      this.selectedPokemon = JSON.parse(storedSelectedPokemon);
+    }
+
     this.search('');
   }
 
@@ -43,6 +48,7 @@ export class EntitiesComponent implements OnInit {
 
   selectPokemon(pokemon: Pokemon): void {
     this.selectedPokemon = pokemon;
+    localStorage.setItem('selectedPokemon', JSON.stringify(pokemon));
     const element = this.elementRef.nativeElement;
     this.viewportScroller.scrollToPosition([element.scrollLeft, element.offsetTop]);
   }
