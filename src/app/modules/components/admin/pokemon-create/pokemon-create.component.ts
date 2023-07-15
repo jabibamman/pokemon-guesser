@@ -59,7 +59,18 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
   }
 
   onFileSelected(event: any) {
-    this.fileToUpload = event.target.files[0];
+    const reader = new FileReader();
+
+    if(event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        this.form.patchValue({
+          image: reader.result as string
+        });
+      };
+    }
   }
 
   updateFemalePercentage() {
@@ -126,9 +137,14 @@ export class PokemonCreateComponent implements OnInit, OnDestroy {
       fileReader.readAsDataURL(this.fileToUpload);
 
       this.notificationService.showSuccess(this.pokemon.name+' has been created!', 'Success');
+      this.resetForm();
     } else {
       console.log('invalid form');
     }
+  }
+
+  resetForm() {
+    this.form.reset();
   }
 
   ngOnDestroy(): void {
