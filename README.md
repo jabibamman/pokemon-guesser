@@ -1,4 +1,5 @@
 # PokemonGuesser
+[![wakatime](https://wakatime.com/badge/user/e52bef9d-e298-4ffd-b606-f63f36526478/project/6d2890cd-398d-440f-b48d-fce9c197ef8a.svg)](https://wakatime.com/badge/user/e52bef9d-e298-4ffd-b606-f63f36526478/project/6d2890cd-398d-440f-b48d-fce9c197ef8a)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.3.
 
